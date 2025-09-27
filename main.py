@@ -1,6 +1,5 @@
-import tkinter as tk
+from window import *
 
-root = tk.Tk()
-root.title("Recallr")
+window = Window("Recallar")
 
-root.mainloop()
+window.mainloop()
