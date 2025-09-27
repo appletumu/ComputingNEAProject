@@ -5,10 +5,7 @@ randomised_items = []
 change_pos = []
 
 i = 0
-while True:
-    if i >= len(items):
-        break
-
+for i in range(len(items)):
     possible_pos = random.randint(0, len(items)-1)
     
     if possible_pos in change_pos:
