@@ -1,5 +1,5 @@
 from window import *
 
-window = Window("Recallar")
+window = Window("Recallr")
 
 window.mainloop()
