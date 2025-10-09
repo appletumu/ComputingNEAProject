@@ -31,24 +31,27 @@ class Window(tk.CTk):
         label.pack(pady=(5, 15))
 
     def display_screen(self):
-        components = Components(self)
-        components.create_frame()
+        frame = Frame(self)
 
-        components.title("Recallr")
-        components.content("Please fill in your login details!")
-        components.entry_field("Username")
-        components.entry_field("Password")
-        components.button("Login")
-        components.button("Create account")
+        frame.components.title("Recallr")
+        frame.components.content("Please fill in your login details!")
+        frame.components.entry_field("Username")
+        frame.components.entry_field("Password")
+        frame.components.button("Login")
+        frame.components.button("Create account")
 
-class Components():
-    def __init__(self, window):
-        self.window = window
-        self.frame = None
+class Frame(tk.CTkFrame):
+    def __init__(self, window, **kwargs):
+        super().__init__(window, **kwargs)
 
-    def create_frame(self):
-        self.frame = tk.CTkFrame(self.window, fg_color="transparent")
-        self.frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.configure(fg_color="transparent")
+        self.place(relx=0.5, rely=0.5, anchor="center") # Centres the frame
+
+        self.components = Components(self)
+
+class Components:
+    def __init__(self, frame):
+        self.frame = frame
 
     def title(self, text="Title"):
         component = tk.CTkLabel(self.frame, text=text, font=("Arial", 68))
