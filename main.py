@@ -1,4 +1,4 @@
-from window import Window, Components
+from window import Window
 
 window = Window("Recallr")
 
