@@ -1,7 +1,7 @@
 import customtkinter as tk
 
 class Window(tk.CTk):
-    def __init__(self, title="Window"):
+    def __init__(self, title):
         super().__init__()
 
         self.title(title)

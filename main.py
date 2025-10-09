@@ -1,6 +1,6 @@
 from window import Window, Components
 
-window = Window(title="Recallr")
+window = Window("Recallr")
 components = Components(window)
 
 components.display_title()
