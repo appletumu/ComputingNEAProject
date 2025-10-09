@@ -1,5 +1,8 @@
-from window import *
+from window import Window, Components
 
-window = Window("Recallr")
+window = Window(title="Recallr")
+components = Components(window)
+
+components.display_title()
 
 window.mainloop()
