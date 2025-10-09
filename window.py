@@ -6,6 +6,7 @@ class Window(tk.CTk):
 
         self.title(title)
         self.geometry("800x600")
+        tk.set_appearance_mode("light") 
 
     def display_screen(self):
         return
@@ -15,20 +16,23 @@ class Components():
         self.window = window
 
     def display_title(self):
-        label = tk.CTkLabel(self.window, text="Recallr", font=("Arial", 24))
-        label.place(relx=0.5, rely=0.3, anchor="center")
+        frame = tk.CTkFrame(self.window, fg_color="transparent")
+        frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        label = tk.CTkLabel(self.window, text="Please fill in your login details!", font=("Arial", 11))
-        label.place(relx=0.5, rely=0.4, anchor="center")
+        label = tk.CTkLabel(frame, text="Recallr", font=("Arial", 68))
+        label.pack(pady=(15, 5))
 
-        textbox = tk.CTkEntry(self.window, placeholder_text="Username", font=("Arial", 11))
-        textbox.place(relx=0.5, rely=0.5, anchor="center")
-        
-        textbox = tk.CTkEntry(self.window, placeholder_text="Password", font=("Arial", 11))
-        textbox.place(relx=0.5, rely=0.6, anchor="center")
+        label = tk.CTkLabel(frame, text="Please fill in your login details!", font=("Arial", 16))
+        label.pack(pady=(5, 15))
 
-        label = tk.CTkButton(self.window, text="Login", font=("Arial", 11))
-        label.place(relx=0.5, rely=0.7, anchor="center")
+        textbox = tk.CTkEntry(frame, placeholder_text="Username", font=("Arial", 14), width=200, height=40)
+        textbox.pack(pady=(15, 5))
 
-        label = tk.CTkButton(self.window, text="Create account", font=("Arial", 11))
-        label.place(relx=0.5, rely=0.8, anchor="center")
+        textbox = tk.CTkEntry(frame, placeholder_text="Password", font=("Arial", 14), width=200, height=40)
+        textbox.pack(pady=(5, 15))
+
+        label = tk.CTkButton(frame, text="Login", font=("Arial", 14), width=200, height=40)
+        label.pack(pady=(15, 5))
+
+        label = tk.CTkButton(frame, text="Create account", font=("Arial", 16), width=200, height=40)
+        label.pack(pady=(5, 15))
