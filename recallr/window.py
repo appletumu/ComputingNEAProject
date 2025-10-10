@@ -9,17 +9,19 @@ class Window(tk.CTk):
         tk.set_appearance_mode("light") 
 
     def startup(self):
+        print("Window started up.")
         frame = Frame(self)
         component = Component(frame)
 
-        component.title("Recallr")
-        component.content("Please fill in your login details!")
-        component.entry_field("Username")
-        component.entry_field("Password")
-        component.button("Login")
-        component.button("Create account", button_type="grey")
+        component.title(text="Recallr")
+        component.content(text="Please fill in your login details!")
+        component.entry_field(placeholder_text="Username")
+        component.entry_field(placeholder_text="Password")
+        component.button(text="Login")
+        component.button(text="Create account", button_type="grey")
 
         frame.load_components()
+        print("Window sucessfully started up.")
 
 class Frame(tk.CTkFrame):
     def __init__(self, window, **kwargs):
@@ -37,10 +39,11 @@ class Frame(tk.CTkFrame):
             current_type = type(component)
 
             if current_type == previous_type:
-                print("Same type")
                 component.pack(pady=(0, 15))
             else:
                 component.pack(pady=(15, 15))
+            
+            print(f"{component} has been packed.")
 
             previous_type = current_type
     
@@ -51,20 +54,23 @@ class Component:
     def __init__(self, root):
         self.root = root
     
+    def button_click(self, button):
+        print(f"{button.cget('text')} Button clicked!")
+    
     def create_component(self, component_type, **kwargs):
         component = component_type(self.root, **kwargs)
         self.root.components.append(component)
 
-    def title(self, text="Title"):
-        self.create_component(tk.CTkLabel, text=text, font=("Arial", 68))
+    def title(self, **kwargs):
+        self.create_component(tk.CTkLabel, font=("Arial", 68), **kwargs)
 
-    def content(self, text="Content"):
-        self.create_component(tk.CTkLabel, text=text, font=("Arial", 16))
+    def content(self, **kwargs):
+        self.create_component(tk.CTkLabel, font=("Arial", 16), **kwargs)
 
-    def entry_field(self, text="Fill in details"):
-        self.create_component(tk.CTkEntry, placeholder_text=text + "...", font=("Arial", 14), width=200, height=40)
+    def entry_field(self, **kwargs):
+        self.create_component(tk.CTkEntry, font=("Arial", 14), width=200, height=40, **kwargs)
 
-    def button(self, text="Button", button_type="primary"):
+    def button(self, text="Button", button_type="primary", **kwargs):
         if button_type == "primary":
             fg_color = "#1E90FF"  # Blue
             hover_color = "#66B2FF"  # Lighter blue
@@ -74,4 +80,7 @@ class Component:
         elif button_type == "grey":
             fg_color = "#808080"  # Grey
             hover_color = "#D3D3D3"  # Ligher grey
-        self.create_component(tk.CTkButton, text=text, font=("Arial", 16), width=200, height=40, fg_color=fg_color, hover_color=hover_color)
+
+        command = self.button_click(self.root.components[-1])
+
+        self.create_component(tk.CTkButton, text=text, font=("Arial", 16), width=200, height=40, fg_color=fg_color, hover_color=hover_color, command=command, **kwargs)
