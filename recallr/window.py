@@ -21,6 +21,7 @@ class Window(tk.CTk):
         component.button(text="Create account", button_type="grey")
 
         frame.load_components()
+        self.mainloop()
         print("Window sucessfully started up.")
 
 class Screen:
