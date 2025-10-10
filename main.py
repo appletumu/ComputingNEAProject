@@ -1,7 +1,7 @@
-from window import Window
+from recallr.window import Window
 
 window = Window("Recallr")
 
-window.display_screen()
+window.startup()
 
 window.mainloop()
