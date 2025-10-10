@@ -23,6 +23,11 @@ class Window(tk.CTk):
         frame.load_components()
         print("Window sucessfully started up.")
 
+class Screen:
+    def __init__(self, window):
+        self.window = window
+        self.frames = []
+
 class Frame(tk.CTkFrame):
     def __init__(self, window, **kwargs):
         super().__init__(window, **kwargs)
