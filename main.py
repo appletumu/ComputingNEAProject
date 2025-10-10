@@ -1,5 +1,5 @@
-from recallr.window import Window
+from recallr.window import WindowManager
 
-window = Window("Recallr")
+window = WindowManager("Recallr")
 
 window.startup()

@@ -1,6 +1,6 @@
 import customtkinter as tk
 
-class Window(tk.CTk):
+class WindowManager(tk.CTk):
     def __init__(self, title):
         super().__init__()
 
@@ -10,20 +10,20 @@ class Window(tk.CTk):
         tk.set_appearance_mode("light") 
 
     def startup(self):
-        print("Window is starting up...")
+        print("WindowManager is starting up...")
 
-        screen = Screen(self)
-        screen.show_screen("login_screen")
+        screen_manager = ScreenManager(self)
+        screen_manager.show_screen("login_screen")
 
-        print("Window sucessfully started up.")
+        print("WindowManager sucessfully started up.")
         self.mainloop()
-        print("Window loop has been broken.")
+        print("WindowManager loop has been broken.")
 
-class Screen(tk.CTkFrame):
-    def __init__(self, window, **kwargs):
-        super().__init__(window, **kwargs)
+class ScreenManager(tk.CTkFrame):
+    def __init__(self, window_manager, **kwargs):
+        super().__init__(window_manager, **kwargs)
 
-        self.window = window
+        self.window_manager = window_manager
         self.frames = []
 
         self.configure(fg_color="transparent")
@@ -55,8 +55,8 @@ class Screen(tk.CTkFrame):
         self.frames.append(frame)
     
 class Frame(tk.CTkFrame):
-    def __init__(self, window, **kwargs):
-        super().__init__(window, **kwargs)
+    def __init__(self, window_manager, **kwargs):
+        super().__init__(window_manager, **kwargs)
 
         self.configure(fg_color="transparent")
         self.place(relx=0.5, rely=0.5, anchor="center") # Centres the frame
