@@ -6,10 +6,42 @@ class Window(tk.CTk):
 
         self.title(title)
         self.geometry("800x600")
+        self.minsize(1336, 768)
         tk.set_appearance_mode("light") 
 
     def startup(self):
-        print("Window started up.")
+        print("Window is starting up...")
+
+        screen = Screen(self)
+        screen.show_screen("login_screen")
+
+        print("Window sucessfully started up.")
+        self.mainloop()
+        print("Window loop has been broken.")
+
+class Screen(tk.CTkFrame):
+    def __init__(self, window, **kwargs):
+        super().__init__(window, **kwargs)
+
+        self.window = window
+        self.frames = []
+
+        self.configure(fg_color="transparent")
+        self.pack(fill="both", expand=True)
+    
+    def show_screen(self, function_name):
+        func = getattr(self, function_name, None)
+        if callable(func):
+            func()
+        else:
+            raise NameError(f"Function '{function_name}' is not available.")
+
+        for frame in self.frames:
+            frame.load_components()
+
+            print(f"'{frame}' frame has been loaded.")
+
+    def login_screen(self):
         frame = Frame(self)
         component = Component(frame)
 
@@ -20,15 +52,8 @@ class Window(tk.CTk):
         component.button(text="Login")
         component.button(text="Create account", button_type="grey")
 
-        frame.load_components()
-        self.mainloop()
-        print("Window sucessfully started up.")
-
-class Screen:
-    def __init__(self, window):
-        self.window = window
-        self.frames = []
-
+        self.frames.append(frame)
+    
 class Frame(tk.CTkFrame):
     def __init__(self, window, **kwargs):
         super().__init__(window, **kwargs)
@@ -49,7 +74,7 @@ class Frame(tk.CTkFrame):
             else:
                 component.pack(pady=(15, 15))
             
-            print(f"{component} has been packed.")
+            print(f"'{component}' component has been packed.")
 
             previous_type = current_type
     
@@ -78,15 +103,19 @@ class Component:
         self.create_component(tk.CTkEntry, font=("Arial", 14), width=200, height=40, **kwargs)
 
     def button(self, text="Button", button_type="primary", **kwargs):
-        if button_type == "primary":
-            fg_color = "#1E90FF"  # Blue
-            hover_color = "#66B2FF"  # Lighter blue
-        elif button_type == "red":
-            fg_color = "#FF0000"  # Red
-            hover_color = "#FF6666"  # Lighter red
-        elif button_type == "grey":
-            fg_color = "#808080"  # Grey
-            hover_color = "#D3D3D3"  # Ligher grey
+        button_colors = {
+            "primary": {"fg_color": "#1E90FF", "hover_color": "#66B2FF"},
+            "red": {"fg_color": "#FF0000", "hover_color": "#FF6666"},
+            "grey": {"fg_color": "#808080", "hover_color": "#D3D3D3"},
+        }
 
-        button_instance = self.create_component(tk.CTkButton, text=text, font=("Arial", 16), width=200, height=40, fg_color=fg_color, hover_color=hover_color, **kwargs)
+        button_instance = self.create_component(
+                tk.CTkButton, 
+                text=text, 
+                font=("Arial", 16), 
+                width=200, height=40, 
+                fg_color=button_colors[button_type]['fg_color'], 
+                hover_color=button_colors[button_type]['hover_color'],
+                **kwargs
+        )
         button_instance.configure(command=lambda b=button_instance: self.button_click(b))
