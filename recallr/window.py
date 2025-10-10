@@ -55,11 +55,12 @@ class Component:
         self.root = root
     
     def button_click(self, button):
-        print(f"{button.cget('text')} Button clicked!")
+        print(f"'{button.cget('text')}' Button clicked!")
     
     def create_component(self, component_type, **kwargs):
         component = component_type(self.root, **kwargs)
         self.root.components.append(component)
+        return component
 
     def title(self, **kwargs):
         self.create_component(tk.CTkLabel, font=("Arial", 68), **kwargs)
@@ -81,6 +82,5 @@ class Component:
             fg_color = "#808080"  # Grey
             hover_color = "#D3D3D3"  # Ligher grey
 
-        command = self.button_click(self.root.components[-1])
-
-        self.create_component(tk.CTkButton, text=text, font=("Arial", 16), width=200, height=40, fg_color=fg_color, hover_color=hover_color, command=command, **kwargs)
+        button_instance = self.create_component(tk.CTkButton, text=text, font=("Arial", 16), width=200, height=40, fg_color=fg_color, hover_color=hover_color, **kwargs)
+        button_instance.configure(command=lambda b=button_instance: self.button_click(b))
