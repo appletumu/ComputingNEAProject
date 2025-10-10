@@ -50,9 +50,9 @@ class Component:
 
     def button(self, text="Button", button_type="primary", **kwargs):
         button_colors = {
-            "primary": {"fg_color": "#1E90FF", "hover_color": "#66B2FF"},
-            "red": {"fg_color": "#FF0000", "hover_color": "#FF6666"},
-            "grey": {"fg_color": "#808080", "hover_color": "#D3D3D3"},
+            "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
+            "red": {"fg_color": "#FF3333", "hover_color": "#FF6666"},
+            "grey": {"fg_color": "#666666", "hover_color": "#808080"},  
         }
 
         button_instance = self.create_component(

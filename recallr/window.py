@@ -14,7 +14,8 @@ class WindowManager(tk.CTk):
         print("WindowManager is starting up...")
 
         screen_manager = ScreenManager(self)
-        screen_manager.show_screen("login_screen")
+
+        screen_manager.show_screen("login")
 
         print("WindowManager sucessfully started up.")
         self.mainloop()
