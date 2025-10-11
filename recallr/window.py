@@ -5,6 +5,7 @@ class WindowManager(tk.CTk):
     def __init__(self, title):
         super().__init__()
 
+        # Sets up the main window
         self.title(title)
         self.geometry("800x600")
         self.minsize(1336, 768)
@@ -17,6 +18,7 @@ class WindowManager(tk.CTk):
 
         screen_manager = ScreenManager(self)
 
+        # Displays the seleccted screen
         screen_manager.show_screen(show_screen)
 
         print("WindowManager sucessfully started up.")

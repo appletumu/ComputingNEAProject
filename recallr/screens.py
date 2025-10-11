@@ -18,6 +18,7 @@ class ScreenManager(tk.CTkFrame):
     def __init__(self, window_manager, **kwargs):
         super().__init__(window_manager, **kwargs)
 
+        # Sets up the screen
         self.configure(fg_color="transparent")
         self.pack(fill="both", expand=True)
 
@@ -71,4 +72,4 @@ class Screens:
         component.default.button(text="Notes")
         component.default.button(text="Test yourself")
         component.default.button(text="Settings", button_type="grey")
-        component.default.button(text="Sign out", button_type="red")
+        component.custom.sign_out_button()
