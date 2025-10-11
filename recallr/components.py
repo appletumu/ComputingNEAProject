@@ -7,7 +7,7 @@ class ComponentManager:
     def button_click(self, button):
         command_handler = ComponentCommandHandler(screen_manager=self.screen_maanger)
 
-        func = getattr(command_handler, button.cget('text').lower().replace(" ", "_"), None)
+        func = getattr(command_handler, button.component_id, None)
         func(button)
 
 class Components:
@@ -23,15 +23,15 @@ class DefaultComponents:
         self.frame_manager = frame_manager
 
     def title(self, **kwargs):
-        self.frame_manager.create_component(tk.CTkLabel, font=("Arial", 68), **kwargs)
+        self.frame_manager.create_component(tk.CTkLabel, component_id=None, font=("Arial", 68), **kwargs)
 
     def content(self, **kwargs):
-        self.frame_manager.create_component(tk.CTkLabel, font=("Arial", 16), **kwargs)
+        self.frame_manager.create_component(tk.CTkLabel, component_id=None, font=("Arial", 16), **kwargs)
 
     def entry_field(self, **kwargs):
-        self.frame_manager.create_component(tk.CTkEntry, font=("Arial", 14), width=200, height=40, **kwargs)
+        self.frame_manager.create_component(tk.CTkEntry, component_id=None, font=("Arial", 14), width=200, height=40, **kwargs)
 
-    def button(self, text="Button", button_type="primary", **kwargs):
+    def button(self, text="Button", button_type="primary", component_id=None, **kwargs):
         button_colors = {
             "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
             "green": {"fg_color": "#218c3a", "hover_color": "#27ae60"},
@@ -41,9 +41,13 @@ class DefaultComponents:
 
         if button_type not in button_colors:
             raise ValueError(f"Unknown button_type '{button_type}'. Available types: {list(button_colors.keys())}")
+        
+        if component_id == None:
+            component_id = text.lower().replace(" ", "_")
 
         button_instance = self.frame_manager.create_component(
             tk.CTkButton,
+            component_id=component_id,
             text=text,
             font=("Arial", 16),
             width=200, height=40,
@@ -72,22 +76,16 @@ class ComponentCommandHandler:
     def login(self, component):
         self.screen_maanger.show_screen("main_menu")
 
-    def create_account(self, component):
+    def create_account_menu(self, component):
         self.screen_maanger.show_screen("create_account")
 
-    def cancel(self, component):
+    def cancel_create_account(self, component):
         self.screen_maanger.show_screen("login")
 
     def sign_out(self, component):
         self.screen_maanger.show_screen("login")
 
-    def notes(self, component):
-        self.screen_maanger.show_screen("coming_soon")
-
-    def test_yourself(self, component):
-        self.screen_maanger.show_screen("coming_soon")
-
-    def settings(self, component):
+    def coming_soon(self, component):
         self.screen_maanger.show_screen("coming_soon")
 
     def main_menu(self, component):

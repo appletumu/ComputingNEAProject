@@ -10,8 +10,9 @@ class FrameManager(tk.CTkFrame):
 
         self.components = []
 
-    def create_component(self, component_type, **kwargs):
+    def create_component(self, component_type, component_id, **kwargs):
         component = component_type(self, **kwargs)
+        component.component_id = component_id
         self.components.append(component)
         return component
     

@@ -58,7 +58,7 @@ class Screens:
         component.default.entry_field(placeholder_text="Username")
         component.default.entry_field(placeholder_text="Password")
         component.default.button(text="Login")
-        component.default.button(text="Create account", button_type="grey")
+        component.default.button(text="Create account", button_type="grey", component_id="create_account_menu")
 
     @setup_screen(screen_type="menu")
     def create_account(self, component):
@@ -67,16 +67,16 @@ class Screens:
         component.default.entry_field(placeholder_text="New Username")
         component.default.entry_field(placeholder_text="New Password")
         component.default.entry_field(placeholder_text="Confirm Password")
-        component.default.button(text="Create account", button_type="green")
-        component.default.button(text="Cancel", button_type="red")
+        component.default.button(text="Create account", button_type="green", component_id="coming_soon")
+        component.default.button(text="Cancel", button_type="red", component_id="cancel_create_account")
 
     @setup_screen(screen_type="menu")
     def main_menu(self, component):
         component.default.title(text="Recallr")
         component.default.content(text="Hello, {username}!")
-        component.default.button(text="Notes")
-        component.default.button(text="Test yourself")
-        component.default.button(text="Settings", button_type="grey")
+        component.default.button(text="Notes", component_id="coming_soon")
+        component.default.button(text="Test yourself", component_id="coming_soon")
+        component.default.button(text="Settings", button_type="grey", component_id="coming_soon")
         component.custom.sign_out_button()
 
     @setup_screen(screen_type="menu")
