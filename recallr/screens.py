@@ -5,7 +5,7 @@ from recallr.components import Components
 def setup_screen(screen_type="menu"):
     def decorator(func):
         def wrapper(self, *args, **kwargs):
-            component = Components(self.frame_manager)
+            component = Components(self.screen_manager, self.frame_manager)
 
             # Call the decorated screen method
             func(self, component, *args, **kwargs)
@@ -27,6 +27,11 @@ class ScreenManager(tk.CTkFrame):
         self.frames = []
     
     def show_screen(self, function_name):
+        # Clears any content from the previous screen
+        for frame in self.frames:
+            frame.destroy()
+        self.frames.clear() 
+        
         frame_manager = FrameManager(self)
 
         screens = Screens(frame_manager)
@@ -72,4 +77,11 @@ class Screens:
         component.default.button(text="Notes")
         component.default.button(text="Test yourself")
         component.default.button(text="Settings", button_type="grey")
+        component.custom.sign_out_button()
+
+    @setup_screen(screen_type="menu")
+    def coming_soon(self, component):
+        component.default.title(text="Recallr")
+        component.default.content(text="Coming Soon!")
+        component.default.button(text="Main menu", button_type="grey")
         component.custom.sign_out_button()

@@ -1,23 +1,25 @@
 import customtkinter as tk
 
 class ComponentManager:
-    def __init__(self):
-        pass
+    def __init__(self, screen_manager):
+        self.screen_maanger = screen_manager
 
     def button_click(self, button):
-        command_handler = ComponentCommandHandler()
+        command_handler = ComponentCommandHandler(screen_manager=self.screen_maanger)
 
         func = getattr(command_handler, button.cget('text').lower().replace(" ", "_"), None)
         func(button)
 
 class Components:
-    def __init__(self, frame_manager):
+    def __init__(self, screen_manager, frame_manager):
+        self.screen_manager = screen_manager
         self.frame_manager = frame_manager
-        self.default = DefaultComponents(frame_manager)
-        self.custom = CustomComponents(frame_manager)
+        self.default = DefaultComponents(screen_manager, frame_manager)
+        self.custom = CustomComponents(screen_manager, frame_manager)
 
 class DefaultComponents:
-    def __init__(self, frame_manager):
+    def __init__(self, screen_manager, frame_manager):
+        self.screen_manager = screen_manager
         self.frame_manager = frame_manager
 
     def title(self, **kwargs):
@@ -46,21 +48,43 @@ class DefaultComponents:
                 **kwargs
         )
 
-        component_manager = ComponentManager()
+        component_manager = ComponentManager(screen_manager=self.screen_manager)
         button_instance.configure(command=lambda b=button_instance: component_manager.button_click(b))
 
 class CustomComponents:
-    def __init__(self, frame_manager):
+    def __init__(self, screen_manager, frame_manager):
+        self.screen_manager = screen_manager
         self.frame_manager = frame_manager
     
     def sign_out_button(self, **kwargs):
-        component = Components(self.frame_manager)
+        component = Components(self.screen_manager, self.frame_manager)
 
         component.default.button(text="Sign out", button_type="red")
 
 class ComponentCommandHandler:
-    def __init__(self):
-        pass
+    def __init__(self, screen_manager):
+        self.screen_maanger = screen_manager
     
     def login(self, component):
-        print("Login button clicked!")
+        self.screen_maanger.show_screen("main_menu")
+
+    def create_account(self, component):
+        self.screen_maanger.show_screen("create_account")
+
+    def cancel(self, component):
+        self.screen_maanger.show_screen("login")
+
+    def sign_out(self, component):
+        self.screen_maanger.show_screen("login")
+
+    def notes(self, component):
+        self.screen_maanger.show_screen("coming_soon")
+
+    def test_yourself(self, component):
+        self.screen_maanger.show_screen("coming_soon")
+
+    def settings(self, component):
+        self.screen_maanger.show_screen("coming_soon")
+
+    def main_menu(self, component):
+        self.screen_maanger.show_screen("main_menu")
