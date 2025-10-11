@@ -34,18 +34,22 @@ class DefaultComponents:
     def button(self, text="Button", button_type="primary", **kwargs):
         button_colors = {
             "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
+            "green": {"fg_color": "#218c3a", "hover_color": "#27ae60"},
             "red": {"fg_color": "#FF3333", "hover_color": "#FF6666"},
-            "grey": {"fg_color": "#666666", "hover_color": "#808080"},  
+            "grey": {"fg_color": "#666666", "hover_color": "#808080"},
         }
 
+        if button_type not in button_colors:
+            raise ValueError(f"Unknown button_type '{button_type}'. Available types: {list(button_colors.keys())}")
+
         button_instance = self.frame_manager.create_component(
-                tk.CTkButton, 
-                text=text, 
-                font=("Arial", 16), 
-                width=200, height=40, 
-                fg_color=button_colors[button_type]['fg_color'], 
-                hover_color=button_colors[button_type]['hover_color'],
-                **kwargs
+            tk.CTkButton,
+            text=text,
+            font=("Arial", 16),
+            width=200, height=40,
+            fg_color=button_colors[button_type]['fg_color'],
+            hover_color=button_colors[button_type]['hover_color'],
+            **kwargs
         )
 
         component_manager = ComponentManager(screen_manager=self.screen_manager)

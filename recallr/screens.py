@@ -67,7 +67,7 @@ class Screens:
         component.default.entry_field(placeholder_text="New Username")
         component.default.entry_field(placeholder_text="New Password")
         component.default.entry_field(placeholder_text="Confirm Password")
-        component.default.button(text="Create account")
+        component.default.button(text="Create account", button_type="green")
         component.default.button(text="Cancel", button_type="red")
 
     @setup_screen(screen_type="menu")
