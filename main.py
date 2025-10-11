@@ -2,4 +2,4 @@ from recallr.window import WindowManager
 
 window = WindowManager("Recallr")
 
-window.startup()
+window.startup(show_screen="login")
