@@ -1,5 +1,6 @@
 import customtkinter as tk
 import tkinter.messagebox as messagebox
+from recallr.backend import DatabaseManager
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):
@@ -90,25 +91,56 @@ class ComponentCommandHandler:
         self.frame_manager = frame_manager
     
     def login(self, component):
+        new_component = Components(self.screen_maanger, self.frame_manager)
+
         username = self.frame_manager.find_component("username").get()
         password = self.frame_manager.find_component("password").get()
 
-        accounts = {
-            "user1": "password1",
-            "hartej": "smelly",
-            "harnek": "password123",
-        }
+        db_manager = DatabaseManager()
+        accounts = db_manager.query("SELECT username FROM accounts")
+        accounts = [account[0] for account in accounts]  # Unpack tuples to get a list of usernames
+        print(accounts)
 
-        try:
-            if accounts[username] == password:
-                self.screen_maanger.show_screen("main_menu")
-            else:
-                raise KeyError
-        except KeyError:
-            component = Components(self.screen_maanger, self.frame_manager)
-            component.default.message_box(message_box_type="error", message="Invalid username or password.")
+        if username in accounts:
+            stored_password = db_manager.query("SELECT password FROM accounts WHERE username = ?", (username,))[0][0]
+        else:
+            new_component.default.message_box(message_box_type="error", message="Invalid username.")
+            return
+
+        if password == stored_password:
+            self.screen_maanger.show_screen("main_menu")
+        else:
+            new_component.default.message_box(message_box_type="error", message="Invalid password.")
+            return
+
     def create_account_menu(self, component):
         self.screen_maanger.show_screen("create_account")
+
+    def make_the_account(self, component):
+        new_component = Components(self.screen_maanger, self.frame_manager)
+
+        display_name = self.frame_manager.find_component("display_name").get()
+        new_username = self.frame_manager.find_component("new_username").get()
+        new_password = self.frame_manager.find_component("new_password").get()
+        confirm_password = self.frame_manager.find_component("confirm_password").get()
+
+        db_manager = DatabaseManager()
+        accounts = db_manager.query("SELECT username FROM accounts")
+
+        if new_password != confirm_password:
+            new_component.default.message_box(message_box_type="error", message="Passwords do not match.")
+            return
+        elif not display_name or not new_username or not new_password:
+            new_component.default.message_box(message_box_type="error", message="None of the fields can be empty.")
+            return
+        elif new_username in accounts:
+            new_component.default.message_box(message_box_type="error", message="Username already exists. Please choose a different one.")
+            return
+
+        db_manager.query("INSERT INTO accounts (username, password) VALUES (?, ?)", (new_username, new_password))
+        
+        self.screen_maanger.show_screen("login")
+        new_component.default.message_box(message_box_type="info", message=f"Sucesfully created an account for '{new_username}'. Please log in again !")
 
     def cancel_create_account(self, component):
         self.screen_maanger.show_screen("login")

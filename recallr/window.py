@@ -1,5 +1,6 @@
 import customtkinter as tk
 from recallr.screens import ScreenManager
+from recallr.backend import DatabaseManager
 
 class WindowManager(tk.CTk):
     def __init__(self, title):
@@ -21,6 +22,11 @@ class WindowManager(tk.CTk):
         # Displays the seleccted screen
         screen_manager.show_screen(show_screen)
 
+        db_manager = DatabaseManager()
+        db_manager.startup()
+
         print("WindowManager sucessfully started up.")
+        self.focus_force()
         self.mainloop()
         print("WindowManager loop has been broken.")
+    

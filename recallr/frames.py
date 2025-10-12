@@ -36,7 +36,7 @@ class FrameManager(tk.CTkFrame):
             else:
                 component.pack(pady=(15, 15))
             
-            #print(f"'{component}' component has been packed.")
+            print(f"'{component.component_id}' component has been packed.")
 
             previous_type = current_type
     
