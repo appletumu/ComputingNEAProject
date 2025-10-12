@@ -1,4 +1,5 @@
 import customtkinter as tk
+import tkinter.messagebox as messagebox
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):
@@ -56,6 +57,17 @@ class DefaultComponents:
 
         component_manager = ComponentManager(screen_manager=self.screen_manager, frame_manager=self.frame_manager)
         button_instance.configure(command=lambda b=button_instance: component_manager.button_click(b))
+    
+    def message_box(self, component_id=None, message_box_type="info", title="Recallr", message="", **kwargs):
+        if message_box_type == "info":
+            messagebox.showinfo("Recallr", message)
+        elif message_box_type == "warning":
+            messagebox.showwarning("Recallr - Warning", message)
+        elif message_box_type == "error":
+            messagebox.showerror("Recallr - Error", message)
+        else:
+            raise ValueError(f"Unknown message_box_type '{message_box_type}'. Available types: ['info', 'warning', 'error']")
+
 
 class CustomComponents:
     def __init__(self, screen_manager, frame_manager):
@@ -81,10 +93,20 @@ class ComponentCommandHandler:
         username = self.frame_manager.find_component("username").get()
         password = self.frame_manager.find_component("password").get()
 
-        print(f"Username: {username}, Password: {password}")
+        accounts = {
+            "user1": "password1",
+            "hartej": "smelly",
+            "harnek": "password123",
+        }
 
-        self.screen_maanger.show_screen("main_menu")
-
+        try:
+            if accounts[username] == password:
+                self.screen_maanger.show_screen("main_menu")
+            else:
+                raise KeyError
+        except KeyError:
+            component = Components(self.screen_maanger, self.frame_manager)
+            component.default.message_box(message_box_type="error", message="Invalid username or password.")
     def create_account_menu(self, component):
         self.screen_maanger.show_screen("create_account")
 
