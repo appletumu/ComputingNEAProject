@@ -83,7 +83,7 @@ class ComponentCommandHandler:
 
         print(f"Username: {username}, Password: {password}")
 
-        #self.screen_maanger.show_screen("main_menu")
+        self.screen_maanger.show_screen("main_menu")
 
     def create_account_menu(self, component):
         self.screen_maanger.show_screen("create_account")
