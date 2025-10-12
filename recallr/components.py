@@ -99,7 +99,6 @@ class ComponentCommandHandler:
         db_manager = DatabaseManager()
         accounts = db_manager.query("SELECT username FROM accounts")
         accounts = [account[0] for account in accounts]  # Unpack tuples to get a list of usernames
-        print(accounts)
 
         if username in accounts:
             stored_password = db_manager.query("SELECT password FROM accounts WHERE username = ?", (username,))[0][0]
