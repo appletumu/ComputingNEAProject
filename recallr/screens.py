@@ -56,7 +56,7 @@ class Screens:
         component.default.title(text="Recallr")
         component.default.content(text="Please fill in your login details!")
         component.default.entry_field(placeholder_text="Username")
-        component.default.entry_field(placeholder_text="Password")
+        component.custom.password_entry_field()
         component.default.button(text="Login")
         component.default.button(text="Create account", button_type="grey", component_id="create_account_menu")
 
@@ -65,8 +65,8 @@ class Screens:
         component.default.title(text="Create Account")
         component.default.content(text="Please fill in the following details!")
         component.default.entry_field(placeholder_text="New Username")
-        component.default.entry_field(placeholder_text="New Password")
-        component.default.entry_field(placeholder_text="Confirm Password")
+        component.custom.password_entry_field(placeholder_text="New Password")
+        component.custom.password_entry_field(placeholder_text="Confirm Password")
         component.default.button(text="Create account", button_type="green", component_id="coming_soon")
         component.default.button(text="Cancel", button_type="red", component_id="cancel_create_account")
 
