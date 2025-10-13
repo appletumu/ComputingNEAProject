@@ -61,8 +61,15 @@ class JsonManager:
         data = self.read_file()
         return data[key] if key in data else None
 
-    def write_json(self, data):
-        import json
+    def write_json(self, updates, section=None):
+        data = self.read_file()
+
+        if section == None:
+            data.update(updates)
+        else:
+            if section not in data or not isinstance(data[section], dict):
+                data[section] = {}
+            data[section].update(updates)
 
         with open(self.file_path, 'w') as file:
             json.dump(data, file, indent=4)

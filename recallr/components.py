@@ -113,6 +113,17 @@ class ComponentCommandHandler:
 
         if password == stored_password:
             self.screen_maanger.show_screen("main_menu")
+
+            # Adds user account to the settings file
+            display_name = db_manager.query("SELECT display_name FROM accounts WHERE username = ?", (username,))[0][0]
+
+            json_manager = JsonManager("settings/app_settings.json")
+            json_manager.write_json({
+                'account': {
+                    'username': username,
+                    'displayName': display_name
+                }
+            })
         else:
             new_component.default.message_box(message_box_type="error", message="Invalid login details")
             return
@@ -142,20 +153,31 @@ class ComponentCommandHandler:
             return
         
         try:
-            db_manager.query("INSERT INTO accounts (username, password) VALUES (?, ?)", (new_username, new_password))
+            db_manager.query("INSERT INTO accounts (username, display_name, password) VALUES (?, ?, ?)", (new_username, display_name, new_password))
         except sqlite3.IntegrityError:
             new_component.default.message_box(message_box_type="error", message="This username is already taken")
             return
             
         
         self.screen_maanger.show_screen("login")
-        new_component.default.message_box(message_box_type="info", message=f"Sucesfully created an account for '{new_username}'. Please log in again")
+        new_component.default.message_box(message_box_type="info", message=f"Succesfully created an account for '{new_username}'. Please log in again")
 
     def cancel_create_account(self, component):
         self.screen_maanger.show_screen("login")
 
     def sign_out(self, component):
+        json_manager = JsonManager("settings/app_settings.json")
+        json_manager.write_json({
+            'account': {
+                'username': None,
+                'displayName': None
+            }
+        })
+
         self.screen_maanger.show_screen("login")
+
+        new_component = Components(self.screen_maanger, self.frame_manager)
+        new_component.default.message_box(message_box_type="info", message="Successfully signed out")
 
     def coming_soon(self, component):
         self.screen_maanger.show_screen("coming_soon")
