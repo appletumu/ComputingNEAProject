@@ -14,7 +14,7 @@ class WindowManager(tk.CTk):
 
         self.screens = []
 
-    def startup(self, show_screen):
+    def startup(self):
         print("WindowManager is starting up...")
 
         screen_manager = ScreenManager(self)
