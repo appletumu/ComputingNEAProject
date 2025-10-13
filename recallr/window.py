@@ -20,13 +20,16 @@ class WindowManager(tk.CTk):
         screen_manager = ScreenManager(self)
 
         # Displays the seleccted screen
-        screen_manager.show_screen(show_screen)
+        screen_manager.show_screen("login")
 
         db_manager = DatabaseManager()
         db_manager.startup()
 
         print("WindowManager sucessfully started up.")
+
+        # Forces the window to be at the very top
         self.focus_force()
+
         self.mainloop()
         print("WindowManager loop has been broken.")
     

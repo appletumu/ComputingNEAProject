@@ -13,6 +13,7 @@ class FrameManager(tk.CTkFrame):
     def create_component(self, component_type, component_id, **kwargs):
         component = component_type(self, **kwargs)
 
+        # Sets the component's ID. Currently makes text labels as None (may change in the future)
         if isinstance(component, tk.CTkLabel) and component_id == None:
             component.component_id = None
         elif isinstance(component, tk.CTkEntry) and component_id == None:
@@ -31,6 +32,8 @@ class FrameManager(tk.CTkFrame):
         for component in self.components:
             current_type = type(component)
 
+            # Similar componets are grouped together.
+            # It does this by checking if the previous component is the same type as the current one.
             if current_type == previous_type:
                 component.pack(pady=(0, 15))
             else:
@@ -48,6 +51,7 @@ class FrameManager(tk.CTkFrame):
     
     def clear_components(self):
         raise NotImplementedError("This method is not yet implemented.")
+    
 class Frames(tk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)

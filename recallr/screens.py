@@ -10,6 +10,7 @@ def setup_screen(screen_type="menu"):
             # Call the decorated screen method
             func(self, component, *args, **kwargs)
 
+            # Adds the frame to the screen
             self.screen_manager.frames.append(self.frame_manager)
         return wrapper
     return decorator
@@ -35,12 +36,14 @@ class ScreenManager(tk.CTkFrame):
         frame_manager = FrameManager(self)
 
         screens = Screens(frame_manager)
+        # Checking to see if the function is apart of the Screens class
         func = getattr(screens, function_name, None)
         if callable(func):
             func()
         else:
             raise NameError(f"Function '{function_name}' is not a valid subroutine for the '{screens.__class__.__name__}' class.")
 
+        # If func is apart of the Screens class, loads the components
         for frame in self.frames:
             frame.load_components()
 

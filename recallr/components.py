@@ -1,5 +1,6 @@
 import customtkinter as tk
 import tkinter.messagebox as messagebox
+import sqlite3
 from recallr.backend import DatabaseManager
 
 class ComponentManager:
@@ -10,6 +11,7 @@ class ComponentManager:
     def button_click(self, button):
         command_handler = ComponentCommandHandler(screen_manager=self.screen_manager, frame_manager=self.frame_manager)
 
+        # Checks if the button's method is wtihin the CommandHandler class
         func = getattr(command_handler, button.component_id, None)
         func(button)
 
@@ -57,6 +59,9 @@ class DefaultComponents:
         )
 
         component_manager = ComponentManager(screen_manager=self.screen_manager, frame_manager=self.frame_manager)
+
+        # Connects the button to the ComponentCommandHandler class
+        # Allows code to be executed when the button is pressed
         button_instance.configure(command=lambda b=button_instance: component_manager.button_click(b))
     
     def message_box(self, component_id=None, message_box_type="info", title="Recallr", message="", **kwargs):
@@ -135,8 +140,13 @@ class ComponentCommandHandler:
         elif new_username in accounts:
             new_component.default.message_box(message_box_type="error", message="Username already exists. Please choose a different one")
             return
-
-        db_manager.query("INSERT INTO accounts (username, password) VALUES (?, ?)", (new_username, new_password))
+        
+        try:
+            db_manager.query("INSERT INTO accounts (username, password) VALUES (?, ?)", (new_username, new_password))
+        except sqlite3.IntegrityError:
+            new_component.default.message_box(message_box_type="error", message="This username is already taken")
+            return
+            
         
         self.screen_maanger.show_screen("login")
         new_component.default.message_box(message_box_type="info", message=f"Sucesfully created an account for '{new_username}'. Please log in again")
