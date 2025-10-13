@@ -1,7 +1,7 @@
 import customtkinter as tk
 import tkinter.messagebox as messagebox
 import sqlite3
-from recallr.backend import DatabaseManager
+from recallr.backend import DatabaseManager, JsonManager
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):

@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 class DatabaseManager:
     def __init__(self):
@@ -40,3 +41,28 @@ class DatabaseManager:
             self.connection.close()
 
         return results
+
+class JsonManager:
+    def __init__(self, file_path):
+        self.file_path = file_path
+
+    def read_file(self):
+        try: 
+            with open(self.file_path, 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            data = {}
+        except json.JSONDecodeError:
+            data = {}
+
+        return data
+    
+    def read_json(self, key):
+        data = self.read_file()
+        return data[key] if key in data else None
+
+    def write_json(self, data):
+        import json
+
+        with open(self.file_path, 'w') as file:
+            json.dump(data, file, indent=4)
