@@ -47,7 +47,8 @@ class ScreenManager(tk.CTkFrame):
         for frame in self.frames:
             frame.load_components()
 
-            print(f"'{frame}' frame has been loaded.")
+            print(f"🎞️ '{frame}' frame has been loaded.")
+            print("-"*30)
 
 class Screens:
     def __init__(self, frame_manager):
