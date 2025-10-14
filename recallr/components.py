@@ -108,7 +108,7 @@ class ComponentCommandHandler:
         if username in accounts:
             stored_password = db_manager.query("SELECT password FROM accounts WHERE username = ?", (username,))[0][0]
         else:
-            new_component.default.message_box(message_box_type="error", message="Invalid login details")
+            new_component.default.message_box(message_box_type="warning", message="Invalid login details")
             return
 
         if password == stored_password:
@@ -125,7 +125,7 @@ class ComponentCommandHandler:
                 }
             })
         else:
-            new_component.default.message_box(message_box_type="error", message="Invalid login details")
+            new_component.default.message_box(message_box_type="warning", message="Invalid login details")
             return
 
     def create_account_menu(self, component):
@@ -143,19 +143,19 @@ class ComponentCommandHandler:
         accounts = db_manager.query("SELECT username FROM accounts")
 
         if new_password != confirm_password:
-            new_component.default.message_box(message_box_type="error", message="Passwords do not match")
+            new_component.default.message_box(message_box_type="warning", message="Passwords do not match")
             return
         elif not display_name or not new_username or not new_password:
-            new_component.default.message_box(message_box_type="error", message="None of the fields can be empty")
+            new_component.default.message_box(message_box_type="warning", message="None of the fields can be empty")
             return
         elif new_username in accounts:
-            new_component.default.message_box(message_box_type="error", message="Username already exists. Please choose a different one")
+            new_component.default.message_box(message_box_type="warning", message="Username already exists. Please choose a different one")
             return
         
         try:
             db_manager.query("INSERT INTO accounts (username, display_name, password) VALUES (?, ?, ?)", (new_username, display_name, new_password))
         except sqlite3.IntegrityError:
-            new_component.default.message_box(message_box_type="error", message="This username is already taken")
+            new_component.default.message_box(message_box_type="warning", message="This username is already taken")
             return
             
         

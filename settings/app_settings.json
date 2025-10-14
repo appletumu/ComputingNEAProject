@@ -1,7 +1,7 @@
 {
     "app_name": "Recallr",
     "account": {
-        "username": "test",
-        "displayName": "Test"
+        "username": null,
+        "displayName": null
     }
 }
