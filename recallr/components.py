@@ -2,6 +2,7 @@ import customtkinter as tk
 import tkinter.messagebox as messagebox
 import sqlite3
 from recallr.backend import DatabaseManager, JsonManager
+from recallr.objects import Account
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):
@@ -36,9 +37,10 @@ class DefaultComponents:
     def entry_field(self, component_id=None, **kwargs):
         self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=("Arial", 14), width=200, height=40, **kwargs)
 
-    def button(self, text="Button", button_type="primary", component_id=None, **kwargs):
+    def button(self, text="Button", button_type="default", button_style=None, component_id=None, **kwargs):
         button_colors = {
             "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
+            "default": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
             "green": {"fg_color": "#218c3a", "hover_color": "#27ae60"},
             "red": {"fg_color": "#FF3333", "hover_color": "#FF6666"},
             "grey": {"fg_color": "#666666", "hover_color": "#808080"},
@@ -47,14 +49,19 @@ class DefaultComponents:
         if button_type not in button_colors:
             raise ValueError(f"Unknown button_type '{button_type}'. Available types: {list(button_colors.keys())}")
 
+        if button_style == None:
+            selected_button_colour = button_type
+        else:
+            selected_button_colour = button_style
+
         button_instance = self.frame_manager.create_component(
             tk.CTkButton,
             component_id=component_id,
             text=text,
             font=("Arial", 16),
             width=200, height=40,
-            fg_color=button_colors[button_type]['fg_color'],
-            hover_color=button_colors[button_type]['hover_color'],
+            fg_color=button_colors[selected_button_colour]['fg_color'],
+            hover_color=button_colors[selected_button_colour]['hover_color'],
             **kwargs
         )
 
@@ -63,6 +70,40 @@ class DefaultComponents:
         # Connects the button to the ComponentCommandHandler class
         # Allows code to be executed when the button is pressed
         button_instance.configure(command=lambda b=button_instance: component_manager.button_click(b))
+
+        # If this is a primary button, binds it to the Enter/Return key
+        if button_type == "primary":
+            try:
+                root = self.screen_manager.winfo_toplevel()
+            except Exception:
+                root = getattr(self.screen_manager, 'master', None)
+
+            if root is not None:
+                # store the primary button reference on the root
+                try:
+                    setattr(root, '_primary_button', button_instance)
+                except Exception:
+                    try:
+                        root._primary_button = button_instance
+                    except Exception:
+                        pass
+
+                # define the handler that will invoke the current primary
+                def _primary_key_handler(event, r=root):
+                    btn = getattr(r, '_primary_button', None)
+                    if btn:
+                        try:
+                            btn.invoke()
+                        except Exception:
+                            pass
+
+                # bind once on the root
+                try:
+                    if not getattr(root, '_primary_keybound', False):
+                        root.bind_all('<Return>', _primary_key_handler)
+                        setattr(root, '_primary_keybound', True)
+                except Exception:
+                    pass
     
     def message_box(self, component_id=None, message_box_type="info", title="Recallr", message="", **kwargs):
         if message_box_type == "info":
@@ -101,32 +142,15 @@ class ComponentCommandHandler:
         username = self.frame_manager.find_component("username").get()
         password = self.frame_manager.find_component("password").get()
 
-        db_manager = DatabaseManager()
-        accounts = db_manager.query("SELECT username FROM accounts")
-        accounts = [account[0] for account in accounts]  # Unpack tuples to get a list of usernames
+        account = Account()
+        result = account.login(username, password)
 
-        if username in accounts:
-            stored_password = db_manager.query("SELECT password FROM accounts WHERE username = ?", (username,))[0][0]
-        else:
-            new_component.default.message_box(message_box_type="warning", message="Invalid login details")
-            return
-
-        if password == stored_password:
+        if result["sucess"]:
+            # Sucessful login
             self.screen_maanger.show_screen("main_menu")
-
-            # Adds user account to the settings file
-            display_name = db_manager.query("SELECT display_name FROM accounts WHERE username = ?", (username,))[0][0]
-
-            json_manager = JsonManager("settings/app_settings.json")
-            json_manager.write_json({
-                'account': {
-                    'username': username,
-                    'displayName': display_name
-                }
-            })
         else:
-            new_component.default.message_box(message_box_type="warning", message="Invalid login details")
-            return
+            # Failed login
+            new_component.default.message_box(message_box_type="error", message=result["message"])    
 
     def create_account_menu(self, component):
         self.screen_maanger.show_screen("create_account")
@@ -139,40 +163,23 @@ class ComponentCommandHandler:
         new_password = self.frame_manager.find_component("new_password").get()
         confirm_password = self.frame_manager.find_component("confirm_password").get()
 
-        db_manager = DatabaseManager()
-        accounts = db_manager.query("SELECT username FROM accounts")
+        account = Account()
+        result = account.create_account(display_name, new_username, new_password, confirm_password)
 
-        if new_password != confirm_password:
-            new_component.default.message_box(message_box_type="warning", message="Passwords do not match")
-            return
-        elif not display_name or not new_username or not new_password:
-            new_component.default.message_box(message_box_type="warning", message="None of the fields can be empty")
-            return
-        elif new_username in accounts:
-            new_component.default.message_box(message_box_type="warning", message="Username already exists. Please choose a different one")
-            return
-        
-        try:
-            db_manager.query("INSERT INTO accounts (username, display_name, password) VALUES (?, ?, ?)", (new_username, display_name, new_password))
-        except sqlite3.IntegrityError:
-            new_component.default.message_box(message_box_type="warning", message="This username is already taken")
-            return
-            
-        
-        self.screen_maanger.show_screen("login")
-        new_component.default.message_box(message_box_type="info", message=f"Succesfully created an account for '{new_username}'. Please log in again")
+        if result["sucess"]:
+            # Sucessfully created an account
+            self.screen_maanger.show_screen("login")
+            new_component.default.message_box(message_box_type="info", message=result["message"]) 
+        else:
+            # Failed to create an account
+            new_component.default.message_box(message_box_type="warning", message=result["message"])    
 
     def cancel_create_account(self, component):
         self.screen_maanger.show_screen("login")
 
     def sign_out(self, component):
-        json_manager = JsonManager("settings/app_settings.json")
-        json_manager.write_json({
-            'account': {
-                'username': None,
-                'displayName': None
-            }
-        })
+        account = Account()
+        account.sign_out()
 
         self.screen_maanger.show_screen("login")
 

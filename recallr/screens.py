@@ -1,6 +1,7 @@
 import customtkinter as tk
 from recallr.frames import FrameManager
 from recallr.components import Components
+from recallr.objects import Account
 
 def setup_screen(screen_type="menu"):
     def decorator(func):
@@ -28,6 +29,20 @@ class ScreenManager(tk.CTkFrame):
         self.frames = []
     
     def show_screen(self, function_name):
+        # Clear any primary-button reference stored in the toplevel
+        try:
+            root = self.winfo_toplevel()
+            if hasattr(root, '_primary_button'):
+                try:
+                    root._primary_button = None
+                except Exception:
+                    try:
+                        delattr(root, '_primary_button')
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
         # Clears any content from the previous screen
         for frame in self.frames:
             frame.destroy()
@@ -63,7 +78,7 @@ class Screens:
         component.default.content(text="Please fill in your login details!")
         component.default.entry_field(placeholder_text="Username")
         component.custom.password_entry_field()
-        component.default.button(text="Login")
+        component.default.button(text="Login", button_type="primary")
         component.default.button(text="Create account", button_type="grey", component_id="create_account_menu")
 
     @setup_screen(screen_type="menu")
@@ -74,13 +89,14 @@ class Screens:
         component.default.entry_field(placeholder_text="New Username")
         component.custom.password_entry_field(placeholder_text="New Password")
         component.custom.password_entry_field(placeholder_text="Confirm Password")
-        component.default.button(text="Create account", button_type="green", component_id="make_the_account")
+        component.default.button(text="Create account", button_type="primary", button_style="green", component_id="make_the_account")
         component.default.button(text="Cancel", button_type="red", component_id="cancel_create_account")
 
     @setup_screen(screen_type="menu")
     def main_menu(self, component):
+        account = Account()
         component.default.title(text="Recallr")
-        component.default.content(text="Hello, {account.display_name}!")
+        component.default.content(text=f"Hello, {account.display_name}!")
         component.default.button(text="Notes", component_id="coming_soon")
         component.default.button(text="Test yourself", component_id="coming_soon")
         component.default.button(text="Settings", button_type="grey", component_id="coming_soon")
