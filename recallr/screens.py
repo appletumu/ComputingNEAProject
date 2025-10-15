@@ -80,7 +80,7 @@ class Screens:
     @setup_screen(screen_type="menu")
     def main_menu(self, component):
         component.default.title(text="Recallr")
-        component.default.content(text="Hello, {username}!")
+        component.default.content(text="Hello, {account.display_name}!")
         component.default.button(text="Notes", component_id="coming_soon")
         component.default.button(text="Test yourself", component_id="coming_soon")
         component.default.button(text="Settings", button_type="grey", component_id="coming_soon")
