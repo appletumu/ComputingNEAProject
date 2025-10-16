@@ -6,16 +6,11 @@ from recallr.objects import Account
 def setup_screen(screen_type="menu"):
     def decorator(func):
         def wrapper(self, *args, **kwargs):
-            # create the default main frame for this screen and pass its
             # Components wrapper into the screen method as `component`.
-            component = self.screen_manager.create_frame(relx=0.75, rely=0.5, anchor="center")
+            component = self.screen_manager.create_frame()
 
             # Call the decorated screen method
             func(self, component, *args, **kwargs)
-
-            # Adds the frame to the screen
-            # create_frame already registers the frame with screen_manager.frames
-            # so nothing else to do here.
         return wrapper
     return decorator
 
@@ -31,18 +26,16 @@ class ScreenManager(tk.CTkFrame):
 
         self.frames = []
 
-    def create_frame(self, relx=None, rely=0.5, anchor="center", place_kwargs=None):
+    def create_frame(self, place_kwargs=None):
         frame_manager = FrameManager(self)
 
-        if place_kwargs is None:
-            place_kwargs = {}
-        if relx is not None:
-            frame = Frames(frame_manager)
+        frame = Frames(frame_manager)
 
-            name = "centred"
-            func = getattr(frame, name, None)
+        name = "centred"
+        func = getattr(frame, name, None)
 
-            func()
+        # Runs the code within the Frames class
+        func()
 
         self.frames.append(frame_manager)
         return Components(self, frame_manager)
@@ -136,7 +129,7 @@ class Screens:
         component.default.content(text="Here are your notes!")
         component.custom.main_menu_button()
 
-        sidebar = self.screen_manager.create_frame(relx=0.75, rely=0.5, anchor="center")
+        sidebar = self.screen_manager.create_frame()
         sidebar.default.button(text="Useless button")
 
     @setup_screen(screen_type="menu")
