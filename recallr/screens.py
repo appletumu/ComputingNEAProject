@@ -6,13 +6,16 @@ from recallr.objects import Account
 def setup_screen(screen_type="menu"):
     def decorator(func):
         def wrapper(self, *args, **kwargs):
-            component = Components(self.screen_manager, self.frame_manager)
+            # create the default main frame for this screen and pass its
+            # Components wrapper into the screen method as `component`.
+            component = self.screen_manager.create_frame(relx=0.75, rely=0.5, anchor="center")
 
             # Call the decorated screen method
             func(self, component, *args, **kwargs)
 
             # Adds the frame to the screen
-            self.screen_manager.frames.append(self.frame_manager)
+            # create_frame already registers the frame with screen_manager.frames
+            # so nothing else to do here.
         return wrapper
     return decorator
 
@@ -34,7 +37,12 @@ class ScreenManager(tk.CTkFrame):
         if place_kwargs is None:
             place_kwargs = {}
         if relx is not None:
-            frame_manager.place(relx=relx, rely=rely, anchor=anchor, **place_kwargs)
+            frame = Frames(frame_manager)
+
+            name = "centred"
+            func = getattr(frame, name, None)
+
+            func()
 
         self.frames.append(frame_manager)
         return Components(self, frame_manager)

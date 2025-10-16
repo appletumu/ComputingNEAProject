@@ -4,10 +4,9 @@ import customtkinter as tk
 class FrameManager(tk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-
-        # Sets up the frame
-        self.configure(fg_color="transparent")
-        self.place(relx=0.5, rely=0.5, anchor="center")
+        # FrameManager no longer auto-configures or auto-places itself.
+        # Placement and styling are handled by the helper Frames classes
+        # (centred, sidebar, note_taking) so callers can choose layout.
 
         self.components = []
 
@@ -56,15 +55,17 @@ class FrameManager(tk.CTkFrame):
 class Frames(tk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+
+        self.master = master
     
     def centred(self, **kwargs):
-        self.configure(fg_color="transparent")
-        self.place(relx=0.5, rely=0.5, anchor="center")
+        self.master.configure(fg_color="transparent")
+        self.master.place(relx=0.5, rely=0.5, anchor="center")
     
     def sidebar(self, **kwargs):
-        self.configure(fg_color="transparent")
+        self.configure(fg_color="black")
         self.pack(side="left", fill="y", padx=20, pady=20)
     
     def note_taking(self, **kwargs):
         self.configure(fg_color="transparent")
-        self.pack(fill="both", expand=True, padx=20, pady=20)
+        self.pack(side="left", fill="y", padx=20, pady=20)

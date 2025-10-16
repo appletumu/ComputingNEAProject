@@ -60,7 +60,7 @@ class Account:
         try:
             # Sucessfully created an account
             self.db_manager.query("INSERT INTO accounts (username, display_name, password) VALUES (?, ?, ?)", (new_username, display_name, new_password))
-            return {"sucess": True, "message": "Succesfully created an account for '{new_username}'. Please log in again"}
+            return {"sucess": True, "message": f"Succesfully created an account for '{new_username}'. Please log in again"}
         except sqlite3.IntegrityError:
             return {"sucess": False, "message": "This username is already taken"}
     
