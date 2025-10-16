@@ -34,6 +34,7 @@ class WindowManager(tk.CTk):
 
         # Displays the seleccted screen
         if account['username'] == stored_username and account['username'] != None:
+            # Successful login
             screen_manager.show_screen("main_menu")
         elif account['username'] != stored_username and account['username'] != None:
             screen_manager.show_screen("login")

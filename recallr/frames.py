@@ -1,5 +1,6 @@
 import customtkinter as tk
 
+
 class FrameManager(tk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
@@ -55,6 +56,15 @@ class FrameManager(tk.CTkFrame):
 class Frames(tk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-
+    
+    def centred(self, **kwargs):
         self.configure(fg_color="transparent")
-        self.place(relx=0.5, rely=0.5, anchor="center")  # Centres the frame
+        self.place(relx=0.5, rely=0.5, anchor="center")
+    
+    def sidebar(self, **kwargs):
+        self.configure(fg_color="transparent")
+        self.pack(side="left", fill="y", padx=20, pady=20)
+    
+    def note_taking(self, **kwargs):
+        self.configure(fg_color="transparent")
+        self.pack(fill="both", expand=True, padx=20, pady=20)

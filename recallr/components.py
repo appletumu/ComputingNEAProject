@@ -14,7 +14,10 @@ class ComponentManager:
 
         # Checks if the button's method is wtihin the CommandHandler class
         func = getattr(command_handler, button.component_id, None)
-        func(button)
+        try:
+            func(button)
+        except TypeError:
+            print(f"❌ The button '{button.component_id}' has no associated action")
 
 class Components:
     def __init__(self, screen_manager, frame_manager):
@@ -125,6 +128,11 @@ class CustomComponents:
         component = Components(self.screen_manager, self.frame_manager)
 
         component.default.entry_field(placeholder_text=placeholder_text, show="*")
+
+    def main_menu_button(self, **kwargs):
+        component = Components(self.screen_manager, self.frame_manager)
+
+        component.default.button(text="Main menu", button_type="grey")
     
     def sign_out_button(self, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
@@ -150,7 +158,7 @@ class ComponentCommandHandler:
             self.screen_maanger.show_screen("main_menu")
         else:
             # Failed login
-            new_component.default.message_box(message_box_type="error", message=result["message"])    
+            new_component.default.message_box(message_box_type="warning", message=result["message"])    
 
     def create_account_menu(self, component):
         self.screen_maanger.show_screen("create_account")
@@ -191,3 +199,9 @@ class ComponentCommandHandler:
 
     def main_menu(self, component):
         self.screen_maanger.show_screen("main_menu")
+    
+    def quiz_menu(self, component):
+        self.screen_maanger.show_screen("quiz_menu")
+
+    def notes(self, component):
+        self.screen_maanger.show_screen("notes")

@@ -1,5 +1,5 @@
 import customtkinter as tk
-from recallr.frames import FrameManager
+from recallr.frames import FrameManager, Frames
 from recallr.components import Components
 from recallr.objects import Account
 
@@ -27,6 +27,17 @@ class ScreenManager(tk.CTkFrame):
         self.window_manager = window_manager
 
         self.frames = []
+
+    def create_frame(self, relx=None, rely=0.5, anchor="center", place_kwargs=None):
+        frame_manager = FrameManager(self)
+
+        if place_kwargs is None:
+            place_kwargs = {}
+        if relx is not None:
+            frame_manager.place(relx=relx, rely=rely, anchor=anchor, **place_kwargs)
+
+        self.frames.append(frame_manager)
+        return Components(self, frame_manager)
     
     def show_screen(self, function_name):
         # Clear any primary-button reference stored in the toplevel
@@ -97,14 +108,32 @@ class Screens:
         account = Account()
         component.default.title(text="Recallr")
         component.default.content(text=f"Hello, {account.display_name}!")
-        component.default.button(text="Notes", component_id="coming_soon")
-        component.default.button(text="Test yourself", component_id="coming_soon")
+        component.default.button(text="Notes")
+        component.default.button(text="Test yourself", component_id="quiz_menu")
         component.default.button(text="Settings", button_type="grey", component_id="coming_soon")
         component.custom.sign_out_button()
+
+    @setup_screen(screen_type="menu")
+    def quiz_menu(self, component):
+        component.default.title(text="Quiz Menu")
+        component.default.content(text="Please pick which mode you would like to do!")
+        component.default.button(text="Flashcards", component_id="coming_soon")
+        component.default.button(text="Multiple choice", component_id="coming_soon")
+        component.default.button(text="Blurting", component_id="coming_soon")
+        component.custom.main_menu_button()
+
+    @setup_screen(screen_type="menu")
+    def notes(self, component):
+        component.default.title(text="Notes")
+        component.default.content(text="Here are your notes!")
+        component.custom.main_menu_button()
+
+        sidebar = self.screen_manager.create_frame(relx=0.75, rely=0.5, anchor="center")
+        sidebar.default.button(text="Useless button")
 
     @setup_screen(screen_type="menu")
     def coming_soon(self, component):
         component.default.title(text="Recallr")
         component.default.content(text="Coming Soon!")
-        component.default.button(text="Main menu", button_type="grey")
+        component.custom.main_menu_button()
         component.custom.sign_out_button()
