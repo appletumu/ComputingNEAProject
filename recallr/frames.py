@@ -33,19 +33,20 @@ class FrameManager(tk.CTkFrame):
 
             # Similar componets are grouped together.
             # It does this by checking if the previous component is the same type as the current one.
-            if current_type == previous_type:
+            if current_type == previous_type and previous_has_padding == True:
                 pady=(0, 15)
             else:
                 pady=(15, 15)
             
             if component.add_padding == False:
-                pady=(0, 0)
+                pady=(2, 0)
             
             component.pack(pady=pady)
             
             print(f"⚙️ '{component.component_id}' component has been packed.")
 
             previous_type = current_type
+            previous_has_padding = component.add_padding
     
     def find_component(self, component_id):
         for component in self.components:

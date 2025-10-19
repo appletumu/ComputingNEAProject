@@ -132,8 +132,9 @@ class Screens:
         main.custom.main_menu_button()
 
         sidebar = self.screen_manager.create_frame("sidebar")
-        for i in range(99):
-            sidebar.custom.view_note_button()
+        for note_id in range(1, 11):
+            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id+1}") # This will be replaced with an ID from the database
+        sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
     def coming_soon(self):

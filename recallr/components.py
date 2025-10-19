@@ -127,23 +127,23 @@ class CustomComponents:
     
     def view_note_button(self, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
-
-        component.default.button(text="Note Title\nView note...", padding=False)
+        note_id = kwargs.pop('note_id', 1)
+        component.default.button(text=f"Note {note_id}\nNote content...", padding=False, button_type="grey", **kwargs)
 
     def password_entry_field(self, placeholder_text="Password", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
 
-        component.default.entry_field(placeholder_text=placeholder_text, show="*")
+        component.default.entry_field(placeholder_text=placeholder_text, show="*", **kwargs)
 
     def main_menu_button(self, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
 
-        component.default.button(text="Main menu", button_type="grey")
+        component.default.button(text="Main menu", button_type="grey", **kwargs)
     
     def sign_out_button(self, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
 
-        component.default.button(text="Sign out", button_type="red")
+        component.default.button(text="Sign out", button_type="red", **kwargs)
 
 class ComponentCommandHandler:
     def __init__(self, screen_manager, frame_manager):
