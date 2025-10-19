@@ -40,7 +40,7 @@ class DefaultComponents:
     def entry_field(self, component_id=None, **kwargs):
         self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=("Arial", 14), width=200, height=40, **kwargs)
 
-    def button(self, text="Button", button_type="default", button_style=None, component_id=None, **kwargs):
+    def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, **kwargs):
         button_colors = {
             "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
             "default": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
@@ -60,6 +60,7 @@ class DefaultComponents:
         button_instance = self.frame_manager.create_component(
             tk.CTkButton,
             component_id=component_id,
+            padding=padding,
             text=text,
             font=("Arial", 16),
             width=200, height=40,
@@ -123,6 +124,11 @@ class CustomComponents:
     def __init__(self, screen_manager, frame_manager):
         self.screen_manager = screen_manager
         self.frame_manager = frame_manager
+    
+    def view_note_button(self, **kwargs):
+        component = Components(self.screen_manager, self.frame_manager)
+
+        component.default.button(text="Note Title\nView note...", padding=False)
 
     def password_entry_field(self, placeholder_text="Password", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)

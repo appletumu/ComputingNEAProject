@@ -4,13 +4,10 @@ import customtkinter as tk
 class FrameManager(tk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
-        # FrameManager no longer auto-configures or auto-places itself.
-        # Placement and styling are handled by the helper Frames classes
-        # (centred, sidebar, note_taking) so callers can choose layout.
 
         self.components = []
 
-    def create_component(self, component_type, component_id, **kwargs):
+    def create_component(self, component_type, component_id, padding=True, **kwargs):
         component = component_type(self, **kwargs)
 
         # Sets the component's ID. Currently makes text labels as None (may change in the future)
@@ -22,6 +19,8 @@ class FrameManager(tk.CTkFrame):
             component.component_id = component.cget("text").lower().replace(" ", "_")
         else:
             component.component_id = component_id
+
+        component.add_padding = padding
 
         self.components.append(component)
         return component
@@ -35,9 +34,14 @@ class FrameManager(tk.CTkFrame):
             # Similar componets are grouped together.
             # It does this by checking if the previous component is the same type as the current one.
             if current_type == previous_type:
-                component.pack(pady=(0, 15))
+                pady=(0, 15)
             else:
-                component.pack(pady=(15, 15))
+                pady=(15, 15)
+            
+            if component.add_padding == False:
+                pady=(0, 0)
+            
+            component.pack(pady=pady)
             
             print(f"⚙️ '{component.component_id}' component has been packed.")
 
@@ -63,8 +67,8 @@ class Frames(tk.CTkFrame):
         self.master.place(relx=0.5, rely=0.5, anchor="center")
     
     def sidebar(self, **kwargs):
-        self.configure(fg_color="black")
-        self.pack(side="left", fill="y", padx=20, pady=20)
+        self.master.configure(fg_color="grey")
+        self.master.pack(side="left", fill="y", padx=20, pady=20)
     
     def note_taking(self, **kwargs):
         self.configure(fg_color="transparent")

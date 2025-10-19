@@ -6,11 +6,8 @@ from recallr.objects import Account
 def setup_screen(screen_type="menu"):
     def decorator(func):
         def wrapper(self, *args, **kwargs):
-            # Components wrapper into the screen method as `component`.
-            component = self.screen_manager.create_frame()
-
             # Call the decorated screen method
-            func(self, component, *args, **kwargs)
+            func(self, *args, **kwargs)
         return wrapper
     return decorator
 
@@ -26,13 +23,12 @@ class ScreenManager(tk.CTkFrame):
 
         self.frames = []
 
-    def create_frame(self, place_kwargs=None):
+    def create_frame(self, frame_name="centred"):
         frame_manager = FrameManager(self)
 
         frame = Frames(frame_manager)
 
-        name = "centred"
-        func = getattr(frame, name, None)
+        func = getattr(frame, frame_name, None)
 
         # Runs the code within the Frames class
         func()
@@ -85,56 +81,64 @@ class Screens:
         self.frame_manager = frame_manager
 
     @setup_screen(screen_type="menu")
-    def login(self, component):
-        component.default.title(text="Recallr")
-        component.default.content(text="Please fill in your login details!")
-        component.default.entry_field(placeholder_text="Username")
-        component.custom.password_entry_field()
-        component.default.button(text="Login", button_type="primary")
-        component.default.button(text="Create account", button_type="grey", component_id="create_account_menu")
+    def login(self):
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Recallr")
+        main.default.content(text="Please fill in your login details!")
+        main.default.entry_field(placeholder_text="Username")
+        main.custom.password_entry_field()
+        main.default.button(text="Login", button_type="primary")
+        main.default.button(text="Create account", button_type="grey", component_id="create_account_menu")
 
     @setup_screen(screen_type="menu")
-    def create_account(self, component):
-        component.default.title(text="Create Account")
-        component.default.content(text="Please fill in the following details!")
-        component.default.entry_field(placeholder_text="What is your name?", component_id="display_name")
-        component.default.entry_field(placeholder_text="New Username")
-        component.custom.password_entry_field(placeholder_text="New Password")
-        component.custom.password_entry_field(placeholder_text="Confirm Password")
-        component.default.button(text="Create account", button_type="primary", button_style="green", component_id="make_the_account")
-        component.default.button(text="Cancel", button_type="red", component_id="cancel_create_account")
+    def create_account(self):
+        main = self.screen_manager.create_frame() 
+        main.default.title(text="Create Account")
+        main.default.content(text="Please fill in the following details!")
+        main.default.entry_field(placeholder_text="What is your name?", component_id="display_name")
+        main.default.entry_field(placeholder_text="New Username")
+        main.custom.password_entry_field(placeholder_text="New Password")
+        main.custom.password_entry_field(placeholder_text="Confirm Password")
+        main.default.button(text="Create account", button_type="primary", button_style="green", component_id="make_the_account")
+        main.default.button(text="Cancel", button_type="red", component_id="cancel_create_account")
 
     @setup_screen(screen_type="menu")
-    def main_menu(self, component):
+    def main_menu(self):
         account = Account()
-        component.default.title(text="Recallr")
-        component.default.content(text=f"Hello, {account.display_name}!")
-        component.default.button(text="Notes")
-        component.default.button(text="Test yourself", component_id="quiz_menu")
-        component.default.button(text="Settings", button_type="grey", component_id="coming_soon")
-        component.custom.sign_out_button()
+
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Recallr")
+        main.default.content(text=f"Hello, {account.display_name}!")
+        main.default.button(text="Notes")
+        main.default.button(text="Test yourself", component_id="quiz_menu")
+        main.default.button(text="Settings", button_type="grey", component_id="coming_soon")
+        main.custom.sign_out_button()
 
     @setup_screen(screen_type="menu")
-    def quiz_menu(self, component):
-        component.default.title(text="Quiz Menu")
-        component.default.content(text="Please pick which mode you would like to do!")
-        component.default.button(text="Flashcards", component_id="coming_soon")
-        component.default.button(text="Multiple choice", component_id="coming_soon")
-        component.default.button(text="Blurting", component_id="coming_soon")
-        component.custom.main_menu_button()
+    def quiz_menu(self):
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Quiz Menu")
+        main.default.content(text="Please pick which mode you would like to do!")
+        main.default.button(text="Flashcards", component_id="coming_soon")
+        main.default.button(text="Multiple choice", component_id="coming_soon")
+        main.default.button(text="Blurting", component_id="coming_soon")
+        main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
-    def notes(self, component):
-        component.default.title(text="Notes")
-        component.default.content(text="Here are your notes!")
-        component.custom.main_menu_button()
+    def notes(self):
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Notes")
+        main.default.content(text="Here are your notes!")
+        main.custom.main_menu_button()
 
-        sidebar = self.screen_manager.create_frame()
-        sidebar.default.button(text="Useless button")
+        sidebar = self.screen_manager.create_frame("sidebar")
+        for i in range(99):
+            sidebar.custom.view_note_button()
 
     @setup_screen(screen_type="menu")
-    def coming_soon(self, component):
-        component.default.title(text="Recallr")
-        component.default.content(text="Coming Soon!")
-        component.custom.main_menu_button()
-        component.custom.sign_out_button()
+    def coming_soon(self):
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Recallr")
+        main.default.content(text="Coming Soon!")
+        main.custom.main_menu_button()
+        main.custom.sign_out_button()
