@@ -7,7 +7,7 @@ class FrameManager(tk.CTkFrame):
 
         self.components = []
 
-    def create_component(self, component_type, component_id, padding=True, **kwargs):
+    def create_component(self, component_type, component_id, padding=True, command=None, **kwargs):
         component = component_type(self, **kwargs)
 
         # Sets the component's ID. Currently makes text labels as None (may change in the future)
@@ -21,6 +21,11 @@ class FrameManager(tk.CTkFrame):
             component.component_id = component_id
 
         component.add_padding = padding
+
+        # Checks if the component has a command
+        # If not, it will just use the component's component_id
+        if command != None:
+            component.associated_command = command
 
         self.components.append(component)
         return component

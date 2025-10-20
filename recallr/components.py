@@ -12,8 +12,15 @@ class ComponentManager:
     def button_click(self, button):
         command_handler = ComponentCommandHandler(screen_manager=self.screen_manager, frame_manager=self.frame_manager)
 
+        # Checks to see if the button has an associated command first
+        # If not, it will use the button's component_id to find the method
+        if hasattr(button, 'associated_command'):
+            button_command = button.associated_command
+        else:
+            button_command = button.component_id
+
         # Checks if the button's method is wtihin the CommandHandler class
-        func = getattr(command_handler, button.component_id, None)
+        func = getattr(command_handler, button_command, None)
         try:
             func(button)
         except TypeError:
@@ -40,7 +47,7 @@ class DefaultComponents:
     def entry_field(self, component_id=None, **kwargs):
         self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=("Arial", 14), width=200, height=40, **kwargs)
 
-    def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, **kwargs):
+    def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, command=None, **kwargs):
         button_colors = {
             "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
             "default": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
@@ -64,6 +71,7 @@ class DefaultComponents:
             text=text,
             font=("Arial", 16),
             width=200, height=40,
+            command=command,
             fg_color=button_colors[selected_button_colour]['fg_color'],
             hover_color=button_colors[selected_button_colour]['hover_color'],
             **kwargs
@@ -211,3 +219,14 @@ class ComponentCommandHandler:
 
     def notes(self, component):
         self.screen_maanger.show_screen("notes")
+    
+    def create_note(self, component):
+        new_component = Components(self.screen_maanger, self.frame_manager)
+        new_component.default.message_box(message_box_type="info", message="Created a new note!")
+
+    def view_note(self, component):
+        # Gets the note ID from the component ID
+        note_id = component.component_id.split("_")[-1]
+
+        new_component = Components(self.screen_maanger, self.frame_manager)
+        new_component.default.message_box(message_box_type="info", message=f"Component ID: {component.component_id}\nNote ID: {note_id}")
