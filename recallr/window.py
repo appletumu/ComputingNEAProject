@@ -17,7 +17,6 @@ class WindowManager(tk.CTk):
 
     def startup(self):
         print("🪟 'WindowManager' is starting up...")
-        print("-"*30)
 
         screen_manager = ScreenManager(self)
         db_manager = DatabaseManager()
@@ -45,11 +44,11 @@ class WindowManager(tk.CTk):
             screen_manager.show_screen("login")
 
         print("🪟 'WindowManager' sucessfully started up.")
-        print("-"*30)
 
         # Forces the window to be at the very top
         self.focus_force()
 
         self.mainloop()
+        print("-"*30)
         print("🪟 'WindowManager' loop has been broken.")
     

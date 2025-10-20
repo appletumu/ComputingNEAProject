@@ -66,6 +66,7 @@ class ScreenManager(tk.CTkFrame):
         else:
             raise NameError(f"Function '{function_name}' is not a valid subroutine for the '{screens.__class__.__name__}' class.")
 
+        print("-"*30)
         # If func is apart of the Screens class, loads the components
         for frame in self.frames:
             frame.load_components()
@@ -73,7 +74,6 @@ class ScreenManager(tk.CTkFrame):
             print(f"🎞️ '{frame}' frame has been loaded.")
         
         print(f"🔲 '{function_name}' screen has been loaded.")
-        print("-"*30)
 
 class Screens:
     def __init__(self, frame_manager):
