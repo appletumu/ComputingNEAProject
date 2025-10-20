@@ -2,6 +2,7 @@ import customtkinter as tk
 from recallr.frames import FrameManager, Frames
 from recallr.components import Components
 from recallr.objects import Account
+from recallr.backend import DatabaseManager
 
 def setup_screen(screen_type="menu"):
     def decorator(func):
@@ -131,9 +132,13 @@ class Screens:
         main.default.content(text="Here are your notes!")
         main.custom.main_menu_button()
 
+        database_manager = DatabaseManager()
+
         sidebar = self.screen_manager.create_frame("sidebar")
-        for note_id in range(1, 11):
-            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id+1}", command="view_note") # This will be replaced with an ID from the database
+        all_notes = database_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
+        for note in all_notes:
+            note_id = note[0]
+            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", command="view_note") # This will be replaced with an ID from the database
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")

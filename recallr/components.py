@@ -134,9 +134,20 @@ class CustomComponents:
         self.frame_manager = frame_manager
     
     def view_note_button(self, **kwargs):
+        account = Account()
         component = Components(self.screen_manager, self.frame_manager)
         note_id = kwargs.pop('note_id', 1)
-        component.default.button(text=f"Note {note_id}\nNote content...", padding=False, button_type="grey", **kwargs)
+
+        note = DatabaseManager().query(
+            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
+            (note_id, account.username)
+        )
+
+        # Gets note info from db
+        note_title = note[0][0]
+        note_content = note[0][1]
+
+        component.default.button(text=f"{note_title}\n{note_content}", padding=False, button_type="grey", **kwargs)
 
     def password_entry_field(self, placeholder_text="Password", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
@@ -221,12 +232,31 @@ class ComponentCommandHandler:
         self.screen_maanger.show_screen("notes")
     
     def create_note(self, component):
+        account = Account()
+
+        DatabaseManager().query(
+            "INSERT INTO notes (owner_username, title, content) VALUES (?, ?, ?)",
+            (account.username, "New Note", "- This is a new note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature.")
+        )
+
+        self.screen_maanger.show_screen("notes")
         new_component = Components(self.screen_maanger, self.frame_manager)
-        new_component.default.message_box(message_box_type="info", message="Created a new note!")
+        new_component.default.message_box(message_box_type="info", message=f"Created a new note for the account '{account.username}'")
 
     def view_note(self, component):
+        account = Account()
+
         # Gets the note ID from the component ID
         note_id = component.component_id.split("_")[-1]
 
+        note = DatabaseManager().query(
+            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
+            (note_id, account.username)
+        )
+
+        # Gets note info from db
+        note_title = note[0][0]
+        note_content = note[0][1]
+
         new_component = Components(self.screen_maanger, self.frame_manager)
-        new_component.default.message_box(message_box_type="info", message=f"Component ID: {component.component_id}\nNote ID: {note_id}")
+        new_component.default.message_box(message_box_type="info", title=note[0][0], message=f"Title: {note_title}\nNote ID: {note_id}\n\n{note_content}")

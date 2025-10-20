@@ -18,6 +18,16 @@ class DatabaseManager:
             )
             """)
 
+            self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS notes (  
+                note_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                owner_username TEXT,
+                title TEXT,
+                content TEXT,
+                FOREIGN KEY (owner_username) REFERENCES accounts(username)
+            )
+            """)
+
             self.connection.commit()
         except sqlite3.Error as e:
             raise e
