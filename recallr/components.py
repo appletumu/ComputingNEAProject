@@ -155,8 +155,8 @@ class CustomComponents:
             note_content = "No preview available"
 
         # Collapse newlines and repeated spaces for both title and content
-        title_max = kwargs.pop('title_max_chars', 25)
-        preview_max = kwargs.pop('preview_max_chars', 25)
+        title_max = kwargs.pop('title_max_chars', 22)
+        preview_max = kwargs.pop('preview_max_chars', 22)
 
         # Title preview
         title_preview = ' '.join(str(note_title).split())
