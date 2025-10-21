@@ -143,11 +143,32 @@ class CustomComponents:
             (note_id, account.username)
         )
 
-        # Gets note info from db
         note_title = note[0][0]
         note_content = note[0][1]
 
-        component.default.button(text=f"{note_title}\n{note_content}", padding=False, button_type="grey", **kwargs)
+        # Get the note / title from the database
+        if note and len(note) > 0 and len(note[0]) >= 2:
+            note_title = note[0][0] or "Untitled"
+            note_content = note[0][1] or  "No preview available"
+        else:
+            note_title = "Untitled"
+            note_content = "No preview available"
+
+        # Collapse newlines and repeated spaces for both title and content
+        title_max = kwargs.pop('title_max_chars', 25)
+        preview_max = kwargs.pop('preview_max_chars', 25)
+
+        # Title preview
+        title_preview = ' '.join(str(note_title).split())
+        if len(title_preview) > title_max:
+            title_preview = title_preview[:title_max].rstrip() + '...'
+
+        # Content preview
+        content_preview = ' '.join(str(note_content).split())
+        if len(content_preview) > preview_max:
+            content_preview = content_preview[:preview_max].rstrip() + '...'
+
+        component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", **kwargs)
 
     def password_entry_field(self, placeholder_text="Password", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
