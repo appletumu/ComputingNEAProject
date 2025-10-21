@@ -126,11 +126,14 @@ class Screens:
         main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
-    def notes(self):
+    def notes(self, view_note_id=None):
         main = self.screen_manager.create_frame()
-        main.default.title(text="Notes")
-        main.default.content(text="Here are your notes!")
-        main.custom.main_menu_button()
+        if view_note_id == None:
+            main.default.title(text="Recallr")
+            main.default.content(text="Select a note from the sidebar!")
+            main.custom.main_menu_button()
+        else:
+            main.custom.view_note_textbox(note_id=view_note_id)
 
         database_manager = DatabaseManager()
 

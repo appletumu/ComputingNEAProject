@@ -117,6 +117,16 @@ class DefaultComponents:
                 except Exception:
                     pass
     
+    def text_box(self, component_id=None, **kwargs):
+        self.frame_manager.create_component(
+            tk.CTkTextbox, 
+            component_id=component_id, 
+            font=("Arial", 14), 
+            width=400, height=200,
+            wrap="word",
+            **kwargs
+        )
+
     def message_box(self, component_id=None, message_box_type="info", title="Recallr", message="", **kwargs):
         if message_box_type == "info":
             messagebox.showinfo("Recallr", message)
@@ -168,6 +178,26 @@ class CustomComponents:
         content_preview = make_preview(note_content, preview_max)
 
         component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", **kwargs)
+    
+    def view_note_textbox(self, note_id, **kwargs):
+        account = Account()
+        component = Components(self.screen_manager, self.frame_manager)
+
+        note = DatabaseManager().query(
+            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
+            (note_id, account.username)
+        )
+
+        # Gets note info from db
+        note_title = note[0][0]
+        note_content = note[0][1]
+
+        component.default.text_box(component_id="notes_textbox", **kwargs)
+
+        text_box = self.frame_manager.find_component(f"notes_textbox_{note_id}")
+
+        # Inserts the note content into the text box
+        text_box.insert("0.0", f"Title: {note_title}\n\n{note_content}")
 
     def password_entry_field(self, placeholder_text="Password", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
