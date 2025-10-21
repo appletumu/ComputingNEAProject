@@ -216,11 +216,11 @@ class CustomComponents:
 
 class ComponentCommandHandler:
     def __init__(self, screen_manager, frame_manager):
-        self.screen_maanger = screen_manager
+        self.screen_manager = screen_manager
         self.frame_manager = frame_manager
     
     def login(self, component):
-        new_component = Components(self.screen_maanger, self.frame_manager)
+        new_component = Components(self.screen_manager, self.frame_manager)
 
         username = self.frame_manager.find_component("username").get()
         password = self.frame_manager.find_component("password").get()
@@ -230,16 +230,16 @@ class ComponentCommandHandler:
 
         if result["sucess"]:
             # Sucessful login
-            self.screen_maanger.show_screen("main_menu")
+            self.screen_manager.show_screen("main_menu")
         else:
             # Failed login
             new_component.default.message_box(message_box_type="warning", message=result["message"])    
 
     def create_account_menu(self, component):
-        self.screen_maanger.show_screen("create_account")
+        self.screen_manager.show_screen("create_account")
 
     def make_the_account(self, component):
-        new_component = Components(self.screen_maanger, self.frame_manager)
+        new_component = Components(self.screen_manager, self.frame_manager)
 
         display_name = self.frame_manager.find_component("display_name").get()
         new_username = self.frame_manager.find_component("new_username").get()
@@ -251,35 +251,35 @@ class ComponentCommandHandler:
 
         if result["sucess"]:
             # Sucessfully created an account
-            self.screen_maanger.show_screen("login")
+            self.screen_manager.show_screen("login")
             new_component.default.message_box(message_box_type="info", message=result["message"]) 
         else:
             # Failed to create an account
             new_component.default.message_box(message_box_type="warning", message=result["message"])    
 
     def cancel_create_account(self, component):
-        self.screen_maanger.show_screen("login")
+        self.screen_manager.show_screen("login")
 
     def sign_out(self, component):
         account = Account()
         account.sign_out()
 
-        self.screen_maanger.show_screen("login")
+        self.screen_manager.show_screen("login")
 
-        new_component = Components(self.screen_maanger, self.frame_manager)
+        new_component = Components(self.screen_manager, self.frame_manager)
         new_component.default.message_box(message_box_type="info", message="Successfully signed out")
 
     def coming_soon(self, component):
-        self.screen_maanger.show_screen("coming_soon")
+        self.screen_manager.show_screen("coming_soon")
 
     def main_menu(self, component):
-        self.screen_maanger.show_screen("main_menu")
+        self.screen_manager.show_screen("main_menu")
     
     def quiz_menu(self, component):
-        self.screen_maanger.show_screen("quiz_menu")
+        self.screen_manager.show_screen("quiz_menu")
 
     def notes(self, component):
-        self.screen_maanger.show_screen("notes")
+        self.screen_manager.show_screen("notes")
     
     def create_note(self, component):
         account = Account()
@@ -289,8 +289,8 @@ class ComponentCommandHandler:
             (account.username, "New Note", "- This is a new note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature.")
         )
 
-        self.screen_maanger.show_screen("notes")
-        new_component = Components(self.screen_maanger, self.frame_manager)
+        self.screen_manager.show_screen("notes")
+        new_component = Components(self.screen_manager, self.frame_manager)
         new_component.default.message_box(message_box_type="info", message=f"Created a new note for the account '{account.username}'")
 
     def view_note(self, component):
@@ -308,5 +308,6 @@ class ComponentCommandHandler:
         note_title = note[0][0]
         note_content = note[0][1]
 
-        new_component = Components(self.screen_maanger, self.frame_manager)
-        new_component.default.message_box(message_box_type="info", title=note[0][0], message=f"Title: {note_title}\nNote ID: {note_id}\n\n{note_content}")
+        new_component = Components(self.screen_manager, self.frame_manager)
+        #new_component.default.message_box(message_box_type="info", title=note[0][0], message=f"Title: {note_title}\nNote ID: {note_id}\n\n{note_content}")
+        self.screen_manager.show_screen("notes", view_note_id=note_id)

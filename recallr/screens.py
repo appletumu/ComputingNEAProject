@@ -37,7 +37,7 @@ class ScreenManager(tk.CTkFrame):
         self.frames.append(frame_manager)
         return Components(self, frame_manager)
     
-    def show_screen(self, function_name):
+    def show_screen(self, function_name, **kwargs):
         # Clear any primary-button reference stored in the toplevel
         try:
             root = self.winfo_toplevel()
@@ -63,7 +63,7 @@ class ScreenManager(tk.CTkFrame):
         # Checking to see if the function is apart of the Screens class
         func = getattr(screens, function_name, None)
         if callable(func):
-            func()
+            func(**kwargs)
         else:
             raise NameError(f"Function '{function_name}' is not a valid subroutine for the '{screens.__class__.__name__}' class.")
 
@@ -126,7 +126,8 @@ class Screens:
         main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
-    def notes(self, view_note_id=None):
+    def notes(self, **kwargs):
+        view_note_id = kwargs.get("view_note_id", None)
         main = self.screen_manager.create_frame()
         if view_note_id == None:
             main.default.title(text="Recallr")
