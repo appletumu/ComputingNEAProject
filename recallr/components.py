@@ -158,15 +158,14 @@ class CustomComponents:
         title_max = kwargs.pop('title_max_chars', 22)
         preview_max = kwargs.pop('preview_max_chars', 22)
 
-        # Title preview
-        title_preview = ' '.join(str(note_title).split())
-        if len(title_preview) > title_max:
-            title_preview = title_preview[:title_max].rstrip() + '...'
+        def make_preview(text, max_chars):
+            s = ' '.join(str(text).split())
+            if len(s) > max_chars:
+                return s[:max_chars].rstrip() + '...'
+            return s
 
-        # Content preview
-        content_preview = ' '.join(str(note_content).split())
-        if len(content_preview) > preview_max:
-            content_preview = content_preview[:preview_max].rstrip() + '...'
+        title_preview = make_preview(note_title, title_max)
+        content_preview = make_preview(note_content, preview_max)
 
         component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", **kwargs)
 
