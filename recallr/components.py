@@ -83,6 +83,11 @@ class DefaultComponents:
             **kwargs
         )
 
+        # If the button is disabled, makes the fg_color as selected.
+        state = button_instance.cget("state")
+        if state == "disabled":
+            button_instance.configure(fg_color=button_colors[selected_button_colour]['hover_color'])
+
         component_manager = ComponentManager(screen_manager=self.screen_manager, frame_manager=self.frame_manager)
 
         # Connects the button to the ComponentCommandHandler class

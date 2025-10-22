@@ -73,7 +73,7 @@ class Frames(tk.CTkFrame):
         self.master.place(relx=0.5, rely=0.5, anchor="center")
     
     def sidebar(self, **kwargs):
-        self.master.configure(fg_color="grey")
+        self.master.configure(fg_color="grey69")
         self.master.pack(side="left", fill="y", padx=20, pady=20)
     
     def note_taking(self, **kwargs):

@@ -140,9 +140,20 @@ class Screens:
 
         sidebar = self.screen_manager.create_frame("sidebar")
         all_notes = database_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
+
+        selected_note_id = None
+        if view_note_id != None:
+            selected_note_id = int(view_note_id)
+
         for note in all_notes:
             note_id = note[0]
-            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", command="view_note")
+
+            # If the button is selected, then it greys it out
+            button_state = "normal"
+            if note_id == selected_note_id:
+                button_state = "disabled"
+
+            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", command="view_note", state=button_state)
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
