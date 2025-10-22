@@ -44,7 +44,7 @@ class DefaultComponents:
         self.screen_manager = screen_manager
         self.frame_manager = frame_manager
 
-    def title(self, text=None, component_id=None, **kwargs):
+    def title(self, text=None, component_id="title", **kwargs):
         app_settings = AppSettings()
         if text == None:
             text = app_settings.app_name
@@ -53,7 +53,7 @@ class DefaultComponents:
         text_size = app_settings.text_sizes['title']
         self.frame_manager.create_component(tk.CTkLabel, text=text, component_id=component_id, font=(font, text_size), **kwargs)
 
-    def content(self, component_id=None, **kwargs):
+    def content(self, component_id="content", **kwargs):
         app_settings = AppSettings()
         font = app_settings.font
         text_size = app_settings.text_sizes['content']

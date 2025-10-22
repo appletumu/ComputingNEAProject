@@ -10,5 +10,15 @@
         "subtitle": 40,
         "content": 16,
         "subtext": 10
+    },
+    "componentSizes": {
+        "button": {
+            "width": 200,
+            "height": 50
+        },
+        "inputField": {
+            "width": 300,
+            "height": 40
+        }
     }
 }

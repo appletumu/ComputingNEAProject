@@ -48,7 +48,7 @@ class FrameManager(tk.CTkFrame):
             
             component.pack(pady=pady)
             
-            print(f"⚙️ '{component.component_id}' component has been packed.")
+            print(f"⚙️ '{component.component_id}' ({type(component).__name__}) component has been packed.")
 
             previous_type = current_type
             previous_has_padding = component.add_padding
