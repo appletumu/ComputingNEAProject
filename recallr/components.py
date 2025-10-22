@@ -318,8 +318,6 @@ class ComponentCommandHandler:
         note_id = get_note_id[0][0]
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
-        #new_component = Components(self.screen_manager, self.frame_manager)
-        #new_component.default.message_box(message_box_type="info", message=f"Created a new note for the account '{account.username}'")
 
     def delete_note(self, component):
         account = Account()

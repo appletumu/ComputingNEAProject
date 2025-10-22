@@ -142,7 +142,7 @@ class Screens:
         all_notes = database_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
         for note in all_notes:
             note_id = note[0]
-            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", command="view_note") # This will be replaced with an ID from the database
+            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", command="view_note")
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
