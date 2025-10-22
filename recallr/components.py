@@ -357,5 +357,4 @@ class ComponentCommandHandler:
         note_content = note[0][1]
 
         new_component = Components(self.screen_manager, self.frame_manager)
-        #new_component.default.message_box(message_box_type="info", title=note[0][0], message=f"Title: {note_title}\nNote ID: {note_id}\n\n{note_content}")
         self.screen_manager.show_screen("notes", view_note_id=note_id)
