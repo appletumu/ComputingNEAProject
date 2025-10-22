@@ -1,7 +1,14 @@
 {
-    "app_name": "Recallr",
+    "appName": "Recallr",
     "account": {
         "username": "yes",
         "displayName": "Yas"
+    },
+    "font": "Arial",
+    "textSizes": {
+        "title": 68,
+        "subtitle": 40,
+        "content": 16,
+        "subtext": 10
     }
 }

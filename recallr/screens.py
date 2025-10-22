@@ -1,7 +1,7 @@
 import customtkinter as tk
 from recallr.frames import FrameManager, Frames
 from recallr.components import Components
-from recallr.objects import Account
+from recallr.objects import Account, AppSettings
 from recallr.backend import DatabaseManager
 
 def setup_screen(screen_type="menu"):
@@ -84,7 +84,7 @@ class Screens:
     @setup_screen(screen_type="menu")
     def login(self):
         main = self.screen_manager.create_frame()
-        main.default.title(text="Recallr")
+        main.default.title()
         main.default.content(text="Please fill in your login details!")
         main.default.entry_field(placeholder_text="Username")
         main.custom.password_entry_field()
@@ -108,7 +108,7 @@ class Screens:
         account = Account()
 
         main = self.screen_manager.create_frame()
-        main.default.title(text="Recallr")
+        main.default.title()
         main.default.content(text=f"Hello, {account.display_name}!")
         main.default.button(text="Notes")
         main.default.button(text="Test yourself", component_id="quiz_menu")
@@ -129,8 +129,10 @@ class Screens:
     def notes(self, **kwargs):
         view_note_id = kwargs.get("view_note_id", None)
         main = self.screen_manager.create_frame()
+
+        # Checks if a note is being viewed
         if view_note_id == None:
-            main.default.title(text="Recallr")
+            main.default.title()
             main.default.content(text="Select a note from the sidebar!")
             main.custom.main_menu_button()
         else:
@@ -141,6 +143,7 @@ class Screens:
         sidebar = self.screen_manager.create_frame("sidebar")
         all_notes = database_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
 
+        # Checks if a note is being viewed
         selected_note_id = None
         if view_note_id != None:
             selected_note_id = int(view_note_id)
@@ -159,7 +162,7 @@ class Screens:
     @setup_screen(screen_type="menu")
     def coming_soon(self):
         main = self.screen_manager.create_frame()
-        main.default.title(text="Recallr")
+        main.default.title()
         main.default.content(text="Coming Soon!")
         main.custom.main_menu_button()
         main.custom.sign_out_button()

@@ -2,7 +2,7 @@ import customtkinter as tk
 import tkinter.messagebox as messagebox
 import sqlite3
 from recallr.backend import DatabaseManager, JsonManager
-from recallr.objects import Account
+from recallr.objects import Account, AppSettings
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):
@@ -44,14 +44,46 @@ class DefaultComponents:
         self.screen_manager = screen_manager
         self.frame_manager = frame_manager
 
-    def title(self, component_id=None, **kwargs):
-        self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=("Arial", 68), **kwargs)
+    def title(self, text=None, component_id=None, **kwargs):
+        app_settings = AppSettings()
+        if text == None:
+            text = app_settings.app_name
+
+        font = app_settings.font
+        text_size = app_settings.text_sizes['title']
+        self.frame_manager.create_component(tk.CTkLabel, text=text, component_id=component_id, font=(font, text_size), **kwargs)
 
     def content(self, component_id=None, **kwargs):
-        self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=("Arial", 16), **kwargs)
+        app_settings = AppSettings()
+        font = app_settings.font
+        text_size = app_settings.text_sizes['content']
+        self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=(font, text_size), **kwargs)
 
     def entry_field(self, component_id=None, **kwargs):
-        self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=("Arial", 14), width=200, height=40, **kwargs)
+        app_settings = AppSettings()
+        font = app_settings.font
+        text_size = app_settings.text_sizes["content"]
+        self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=(font, text_size), width=200, height=40, **kwargs)
+
+    def text_box(self, component_id=None, textbox_size="content", **kwargs):
+        app_settings = AppSettings()
+        font = app_settings.font
+        textbox_size = app_settings.text_sizes[textbox_size]
+
+        wrap = "word"
+
+        # If font size is a title, disable wrapping
+        if textbox_size == app_settings.text_sizes['title']:
+            wrap = "none"
+        
+        self.frame_manager.create_component(
+            tk.CTkTextbox, 
+            component_id=component_id, 
+            font=(font, textbox_size), 
+            width=400, height=200,
+            wrap=wrap,
+            **kwargs
+        )
 
     def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, command=None, **kwargs):
         button_colors = {
@@ -127,16 +159,6 @@ class DefaultComponents:
                         setattr(root, '_primary_keybound', True)
                 except Exception:
                     pass
-    
-    def text_box(self, component_id=None, **kwargs):
-        self.frame_manager.create_component(
-            tk.CTkTextbox, 
-            component_id=component_id, 
-            font=("Arial", 14), 
-            width=400, height=200,
-            wrap="word",
-            **kwargs
-        )
 
     def message_box(self, component_id=None, message_box_type="info", title="Recallr", message="", **kwargs):
         if message_box_type == "info":
@@ -213,7 +235,7 @@ class CustomComponents:
             #note_title = "Untitled"
 
         # Display Components
-        component.default.text_box(component_id=f"notes_title_textbox_{note_id}", **kwargs)
+        component.default.text_box(component_id=f"notes_title_textbox_{note_id}", textbox_size="title", **kwargs)
         component.default.text_box(component_id=f"notes_content_textbox_{note_id}", **kwargs)
         component.default.button(text="Delete note", component_id=f"delete_note_{note_id}", button_type="red", command="delete_note")
         component.custom.main_menu_button()
@@ -357,9 +379,4 @@ class ComponentCommandHandler:
             (note_id, account.username)
         )
 
-        # Gets note info from db
-        note_title = note[0][0]
-        note_content = note[0][1]
-
-        new_component = Components(self.screen_manager, self.frame_manager)
         self.screen_manager.show_screen("notes", view_note_id=note_id)

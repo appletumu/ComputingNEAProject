@@ -1,6 +1,13 @@
 import sqlite3
 from recallr.backend import JsonManager, DatabaseManager
 
+class AppSettings:
+    def __init__(self):
+        json_manager = JsonManager("settings/app_settings.json")
+
+        self.app_name = json_manager.read_json('appName')
+        self.font = json_manager.read_json('font')
+        self.text_sizes = json_manager.read_json('textSizes')
 class Account:
     def __init__(self):
         json_manager = JsonManager("settings/app_settings.json")

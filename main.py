@@ -1,5 +1,8 @@
 from recallr.window import WindowManager
+from recallr.objects import AppSettings
 
-window = WindowManager("Recallr")
+app_settings = AppSettings()
+
+window = WindowManager(app_settings.app_name)
 
 window.startup()
