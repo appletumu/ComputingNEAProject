@@ -19,12 +19,18 @@ class ComponentManager:
         else:
             button_command = button.component_id
 
+        # Uncomment if you need to check the button_command variable
+        #print(button_command)
+
         # Checks if the button's method is wtihin the CommandHandler class
         func = getattr(command_handler, button_command, None)
         try:
             func(button)
-        except TypeError:
+        except TypeError as e:
             print(f"❌ The button '{button.component_id}' has no associated action")
+
+            # Uncomment this if you need to find the error from here
+            #raise e
 
 class Components:
     def __init__(self, screen_manager, frame_manager):
@@ -192,12 +198,27 @@ class CustomComponents:
         note_title = note[0][0]
         note_content = note[0][1]
 
-        component.default.text_box(component_id="notes_textbox", **kwargs)
+        # If it equals None, makes it "" to prevent an _tkinter.TclError
+        if note_title == None:
+            note_title = ""
+        if note_content == None:
+            note_content = ""
 
-        text_box = self.frame_manager.find_component(f"notes_textbox_{note_id}")
+        #if note_title == None:
+            #note_title = "Untitled"
 
-        # Inserts the note content into the text box
-        text_box.insert("0.0", f"Title: {note_title}\n\n{note_content}")
+        # Display Components
+        component.default.text_box(component_id=f"notes_title_textbox_{note_id}", **kwargs)
+        component.default.text_box(component_id=f"notes_content_textbox_{note_id}", **kwargs)
+        component.default.button(text="Delete note", component_id=f"delete_note_{note_id}", button_type="red", command="delete_note")
+        component.custom.main_menu_button()
+
+        title = self.frame_manager.find_component(f"notes_title_textbox_{note_id}")
+        content = self.frame_manager.find_component(f"notes_content_textbox_{note_id}")
+
+        # Inserts the note title and content into the text box
+        title.insert("0.0", note_title)
+        content.insert("0.0", note_content)
 
     def password_entry_field(self, placeholder_text="Password", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
@@ -289,9 +310,38 @@ class ComponentCommandHandler:
             (account.username, "New Note", "- This is a new note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature.")
         )
 
+        get_note_id = DatabaseManager().query(
+            "SELECT MAX(note_id) FROM notes WHERE owner_username = ?",
+            (account.username,)
+        )
+
+        note_id = get_note_id[0][0]
+
+        self.screen_manager.show_screen("notes", view_note_id=note_id)
+        #new_component = Components(self.screen_manager, self.frame_manager)
+        #new_component.default.message_box(message_box_type="info", message=f"Created a new note for the account '{account.username}'")
+
+    def delete_note(self, component):
+        account = Account()
+
+        # Gets the note ID from the component ID
+        note_id = component.component_id.split("_")[-1]
+
+        note = DatabaseManager().query(
+            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
+            (note_id, account.username)
+        )
+
+        note_title = note[0][0]
+
+        DatabaseManager().query(
+            "DELETE FROM notes WHERE note_id = ? AND owner_username = ?",
+            (note_id, account.username)
+        )
+
         self.screen_manager.show_screen("notes")
         new_component = Components(self.screen_manager, self.frame_manager)
-        new_component.default.message_box(message_box_type="info", message=f"Created a new note for the account '{account.username}'")
+        new_component.default.message_box(message_box_type="info", message=f"Deleted the note '{note_title}' with the note ID '{note_id}'.")
 
     def view_note(self, component):
         account = Account()
