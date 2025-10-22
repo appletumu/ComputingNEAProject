@@ -156,7 +156,7 @@ class Screens:
             if note_id == selected_note_id:
                 button_state = "disabled"
 
-            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", command="view_note", state=button_state)
+            sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", state=button_state)
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")

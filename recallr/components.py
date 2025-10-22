@@ -210,7 +210,7 @@ class CustomComponents:
         title_preview = make_preview(note_title, title_max)
         content_preview = make_preview(note_content, preview_max)
 
-        component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", **kwargs)
+        component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", command="view_note", **kwargs)
     
     def view_note_textbox(self, note_id, **kwargs):
         account = Account()
