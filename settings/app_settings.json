@@ -11,14 +11,24 @@
         "content": 16,
         "subtext": 10
     },
-    "componentSizes": {
-        "button": {
+    "componentConfigs": {
+        "title": {
+            "componentType": "CTkLabel",
             "width": 200,
-            "height": 50
-        },
-        "inputField": {
-            "width": 300,
             "height": 40
+        },
+        "button": {
+            "componentType": "CTKButton",
+            "width": 200,
+            "height": 40
+        },
+        "entryField": {
+            "width": 200,
+            "height": 40
+        },
+        "textBox": {
+            "width": 400,
+            "height": 200
         }
     }
 }

@@ -8,6 +8,7 @@ class AppSettings:
         self.app_name = json_manager.read_json('appName')
         self.font = json_manager.read_json('font')
         self.text_sizes = json_manager.read_json('textSizes')
+        self.component_configs = json_manager.read_json("componentConfigs")
 class Account:
     def __init__(self):
         json_manager = JsonManager("settings/app_settings.json")
