@@ -47,14 +47,24 @@ def ui_component(component_type, component_text_size='content'):
             text_size = app_settings.text_sizes[component_text_size]
 
             component_config = app_settings.component_configs[component_type]
-            kwargs.setdefault('width', component_config.get('width'))
-            kwargs.setdefault('height', component_config.get('height'))
+            # Only set width/height defaults if the config provides a concrete value
+            config_width = component_config.get('width')
+            config_height = component_config.get('height')
+            if config_width != None:
+                kwargs.setdefault('width', config_width)
+            if config_height != None:
+                kwargs.setdefault('height', config_height)
 
             # Let the wrapped method modify kwargs directly or return a dict of overrides
             result = func(self, *args, component_id=component_id, **kwargs)
             # If the wrapped function returned a dict, merge it into kwargs
             if isinstance(result, dict):
                 kwargs.update(result)
+
+            # Remove helper-only kwargs that are used by the wrapper but not accepted by the widget constructors
+            helper_keys = ['textbox_size']
+            for k in helper_keys:
+                kwargs.pop(k, None)
 
             # Gets the component type from json
             component_class = getattr(tk, component_config['componentType'])
@@ -85,39 +95,29 @@ class DefaultComponents:
             kwargs['text'] = app_settings.app_name
         return kwargs
 
+    @ui_component(component_type="content", component_text_size="content")
     def content(self, component_id="content", **kwargs):
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes['content']
-        self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=(font, text_size), **kwargs)
+        return kwargs
 
+    @ui_component(component_type="entryField", component_text_size="content")
     def entry_field(self, component_id=None, **kwargs):
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes["content"]
-        component_size = app_settings.component_configs["entryField"]
-        self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=(font, text_size), width=component_size['width'], height=component_size['height'], **kwargs)
+        return kwargs
 
+    @ui_component(component_type="textBox", component_text_size="content")
     def text_box(self, component_id=None, textbox_size="content", **kwargs):
         app_settings = AppSettings()
-        font = app_settings.font
-        textbox_size = app_settings.text_sizes[textbox_size]
-        component_size = app_settings.component_configs["textBox"]
-
         wrap = "word"
 
         # If font size is a title, disable wrapping
         if textbox_size == app_settings.text_sizes['title']:
             wrap = "none"
-        
-        self.frame_manager.create_component(
-            tk.CTkTextbox, 
-            component_id=component_id, 
-            font=(font, textbox_size), 
-            width=component_size['width'], height=component_size['height'],
-            wrap=wrap,
-            **kwargs
-        )
+
+        # Ensure we don't accidentally forward the helper arg 'textbox_size' to the widget
+        kwargs.pop('textbox_size', None)
+
+        kwargs['wrap'] = wrap
+        return kwargs
+
 
     def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, command=None, **kwargs):
         button_colors = {

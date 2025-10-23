@@ -13,9 +13,10 @@
     },
     "componentConfigs": {
         "title": {
-            "componentType": "CTkLabel",
-            "width": 200,
-            "height": 40
+            "componentType": "CTkLabel"
+        },
+        "content": {
+            "componentType": "CTkLabel"
         },
         "button": {
             "componentType": "CTKButton",
@@ -23,10 +24,12 @@
             "height": 40
         },
         "entryField": {
+            "componentType": "CTkEntry",
             "width": 200,
             "height": 40
         },
         "textBox": {
+            "componentType": "CTkTextbox",
             "width": 400,
             "height": 200
         }
