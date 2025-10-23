@@ -39,94 +39,60 @@ class Components:
         self.default = DefaultComponents(screen_manager, frame_manager)
         self.custom = CustomComponents(screen_manager, frame_manager)
 
-def ui_component(component_type, component_text_size='content'):
-    def decorator(func):
-        def wrapper(self, *args, component_id=None, **kwargs):
-            app_settings = AppSettings()
-            font = app_settings.font
-            text_size = app_settings.text_sizes[component_text_size]
-
-            component_config = app_settings.component_configs[component_type]
-            # Only set width/height defaults if the config provides a concrete value
-            config_width = component_config.get('width')
-            config_height = component_config.get('height')
-            if config_width != None:
-                kwargs.setdefault('width', config_width)
-            if config_height != None:
-                kwargs.setdefault('height', config_height)
-
-            # Let the wrapped method modify kwargs directly or return a dict of overrides
-            result = func(self, *args, component_id=component_id, **kwargs)
-            # If the wrapped function returned a dict, merge it into kwargs
-            if isinstance(result, dict):
-                kwargs.update(result)
-
-            # Remove helper-only kwargs that are used by the wrapper but not accepted by the widget constructors
-            helper_keys = ['textbox_size']
-            for k in helper_keys:
-                kwargs.pop(k, None)
-
-            # Gets the component type from json
-            component_class = getattr(tk, component_config['componentType'])
-
-            # Create the component
-            component = self.frame_manager.create_component(
-                component_class,
-                component_id=component_id,
-                font=(font, text_size),
-                **kwargs
-            )
-
-            return component
-        return wrapper
-    return decorator
-
 class DefaultComponents:
     def __init__(self, screen_manager, frame_manager):
         self.screen_manager = screen_manager
         self.frame_manager = frame_manager
-    
-    @ui_component(component_type="title", component_text_size="title")
+
     def title(self, text=None, component_id="title", **kwargs):
         app_settings = AppSettings()
-
-        kwargs['text'] = text
         if text == None:
-            kwargs['text'] = app_settings.app_name
-        return kwargs
+            text = app_settings.app_name
 
-    @ui_component(component_type="content", component_text_size="content")
+        font = app_settings.font
+        text_size = app_settings.text_sizes['title']
+        self.frame_manager.create_component(tk.CTkLabel, text=text, component_id=component_id, font=(font, text_size), **kwargs)
+
     def content(self, component_id="content", **kwargs):
-        return kwargs
+        app_settings = AppSettings()
+        font = app_settings.font
+        text_size = app_settings.text_sizes['content']
+        self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=(font, text_size), **kwargs)
 
-    @ui_component(component_type="entryField", component_text_size="content")
     def entry_field(self, component_id=None, **kwargs):
-        return kwargs
+        app_settings = AppSettings()
+        font = app_settings.font
+        text_size = app_settings.text_sizes["content"]
+        component_size = app_settings.component_configs["entryField"]
+        self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=(font, text_size), width=200, height=40, **kwargs)
 
-    @ui_component(component_type="textBox", component_text_size="content")
     def text_box(self, component_id=None, textbox_size="content", **kwargs):
         app_settings = AppSettings()
+        font = app_settings.font
+        textbox_size = app_settings.text_sizes[textbox_size]
+        component_size = app_settings.component_configs["textBox"]
+
         wrap = "word"
 
         # If font size is a title, disable wrapping
         if textbox_size == app_settings.text_sizes['title']:
             wrap = "none"
-
-        # Ensure we don't accidentally forward the helper arg 'textbox_size' to the widget
-        kwargs.pop('textbox_size', None)
-
-        kwargs['wrap'] = wrap
-        return kwargs
-
+        
+        self.frame_manager.create_component(
+            tk.CTkTextbox, 
+            component_id=component_id, 
+            font=(font, textbox_size), 
+            width=400, height=200,
+            wrap=wrap,
+            **kwargs
+        )
 
     def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, command=None, **kwargs):
-        button_colors = {
-            "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
-            "default": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
-            "green": {"fg_color": "#218c3a", "hover_color": "#27ae60"},
-            "red": {"fg_color": "#FF3333", "hover_color": "#FF6666"},
-            "grey": {"fg_color": "#666666", "hover_color": "#808080"},
-        }
+        app_settings = AppSettings()
+        font = app_settings.font
+        textbox_size = app_settings.text_sizes["content"]
+        component_size = app_settings.component_configs["button"]
+        button_colors = app_settings.colors
 
         if button_type not in button_colors:
             raise ValueError(f"Unknown button_type '{button_type}'. Available types: {list(button_colors.keys())}")
@@ -136,18 +102,13 @@ class DefaultComponents:
         else:
             selected_button_colour = button_style
 
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes['content']
-        component_size = app_settings.component_configs["button"]
-
         button_instance = self.frame_manager.create_component(
             tk.CTkButton,
             component_id=component_id,
             padding=padding,
             text=text,
-            font=(font, text_size),
-            width=component_size['width'], height=component_size['height'],
+            font=("Arial", 16),
+            width=200, height=40,
             command=command,
             fg_color=button_colors[selected_button_colour]['fg_color'],
             hover_color=button_colors[selected_button_colour]['hover_color'],

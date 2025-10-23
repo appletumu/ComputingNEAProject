@@ -11,6 +11,13 @@
         "content": 16,
         "subtext": 10
     },
+    "colors": {
+        "primary": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
+        "default": {"fg_color": "#104A99", "hover_color": "#1E90FF"},
+        "green": {"fg_color": "#218c3a", "hover_color": "#27ae60"},
+        "red": {"fg_color": "#FF3333", "hover_color": "#FF6666"},
+        "grey": {"fg_color": "#666666", "hover_color": "#808080"}
+    },
     "componentConfigs": {
         "title": {
             "componentType": "CTkLabel"
