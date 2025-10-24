@@ -43,6 +43,7 @@ class WindowManager(tk.CTk):
         else:
             screen_manager.show_screen("login")
 
+        print("-"*30)
         print("🪟 'WindowManager' sucessfully started up.")
 
         # Forces the window to be at the very top
