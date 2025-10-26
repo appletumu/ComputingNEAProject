@@ -136,7 +136,8 @@ class Screens:
             main.default.content(text="Select a note from the sidebar!")
             main.custom.main_menu_button()
         else:
-            main.custom.view_note_textbox(note_id=view_note_id)
+            note_taking = self.screen_manager.create_frame("note_taking")
+            note_taking.custom.view_note_textbox(note_id=view_note_id)
 
         database_manager = DatabaseManager()
 

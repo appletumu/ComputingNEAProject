@@ -77,5 +77,5 @@ class Frames(tk.CTkFrame):
         self.master.pack(side="left", fill="y", padx=20, pady=20)
     
     def note_taking(self, **kwargs):
-        self.configure(fg_color="transparent")
-        self.pack(side="left", fill="y", padx=20, pady=20)
+        self.master.configure(fg_color="transparent")
+        self.master.pack(side="right", fill="both", expand=True, padx=20, pady=20)

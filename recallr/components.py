@@ -66,23 +66,29 @@ class DefaultComponents:
         component_size = app_settings.component_configs["entryField"]
         self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=(font, text_size), width=200, height=40, **kwargs)
 
-    def text_box(self, component_id=None, textbox_size="content", **kwargs):
+    def text_box(self, component_id=None, textbox_size="content", width=None, height=None, **kwargs):
         app_settings = AppSettings()
         font = app_settings.font
-        textbox_size = app_settings.text_sizes[textbox_size]
-        component_size = app_settings.component_configs["textBox"]
+        text_size = app_settings.text_sizes[textbox_size]
+
+        # textbox_size is a key: 'title' or 'content'
+
+        if width is None:
+            width = 700 if textbox_size == "title" else 700
+        if height is None:
+            height = 70 if textbox_size == "title" else 300
 
         wrap = "word"
 
         # If font size is a title, disable wrapping
-        if textbox_size == app_settings.text_sizes['title']:
+        if text_size == app_settings.text_sizes['title']:
             wrap = "none"
         
         self.frame_manager.create_component(
             tk.CTkTextbox, 
             component_id=component_id, 
-            font=(font, textbox_size), 
-            width=400, height=200,
+            font=(font, text_size), 
+            width=width, height=height,
             wrap=wrap,
             **kwargs
         )
@@ -237,6 +243,7 @@ class CustomComponents:
         # Display Components
         component.default.text_box(component_id=f"notes_title_textbox_{note_id}", textbox_size="title", **kwargs)
         component.default.text_box(component_id=f"notes_content_textbox_{note_id}", **kwargs)
+        component.default.button(text="Save note", component_id=f"save_note_{note_id}", button_type="primary", command="save_note")
         component.default.button(text="Delete note", component_id=f"delete_note_{note_id}", button_type="red", command="delete_note")
         component.custom.main_menu_button()
 
@@ -345,6 +352,27 @@ class ComponentCommandHandler:
         note_id = get_note_id[0][0]
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
+
+    def save_note(self, component):
+        account = Account()
+
+        # Gets the note ID from the component ID
+        note_id = component.component_id.split("_")[-1]
+
+        title_component = self.frame_manager.find_component(f"notes_title_textbox_{note_id}")
+        content_component = self.frame_manager.find_component(f"notes_content_textbox_{note_id}")
+
+        note_title = title_component.get("0.0", "end").strip()
+        note_content = content_component.get("0.0", "end").strip()
+
+        DatabaseManager().query(
+            "UPDATE notes SET title = ?, content = ? WHERE note_id = ? AND owner_username = ?",
+            (note_title, note_content, note_id, account.username)
+        )
+
+        self.screen_manager.show_screen("notes", view_note_id=note_id)
+        new_component = Components(self.screen_manager, self.frame_manager)
+        new_component.default.message_box(message_box_type="info", message=f"Saved the note '{note_title}' with the note ID '{note_id}'.")
 
     def delete_note(self, component):
         account = Account()
