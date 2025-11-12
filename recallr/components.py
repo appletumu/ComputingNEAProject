@@ -243,7 +243,7 @@ class CustomComponents:
         # Display Components
         component.default.text_box(component_id=f"notes_title_textbox_{note_id}", textbox_size="title", **kwargs)
         component.default.text_box(component_id=f"notes_content_textbox_{note_id}", **kwargs)
-        component.default.button(text="Save note", component_id=f"save_note_{note_id}", button_type="primary", command="save_note")
+        component.default.button(text="Save note", component_id=f"save_note_{note_id}", button_type="default", command="save_note")
         component.default.button(text="Delete note", component_id=f"delete_note_{note_id}", button_type="red", command="delete_note")
         component.custom.main_menu_button()
 
