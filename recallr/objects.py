@@ -88,13 +88,16 @@ class Account:
 class Notes:
     def __init__(self):
         self.db_manager = DatabaseManager()
+        self.json_manager = JsonManager("settings/app_settings.json")
 
     def create_note(self):
         account = Account()
 
+        placeholder_text = self.json_manager.read_json('createNotePlaceholdertext')
+
         DatabaseManager().query(
             "INSERT INTO notes (owner_username, title, content) VALUES (?, ?, ?)",
-            (account.username, "New Note", "- This is a new note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature.")
+            (account.username, placeholder_text['title'],  placeholder_text['content'])
         )
 
         get_note_id = DatabaseManager().query(

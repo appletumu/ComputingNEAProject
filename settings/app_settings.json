@@ -55,5 +55,9 @@
             "width": 400,
             "height": 200
         }
+    },
+    "createNotePlaceholdertext": {
+        "title": "New Note",
+        "content": "- This is a new note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature."
     }
 }
