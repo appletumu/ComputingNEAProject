@@ -84,3 +84,55 @@ class Account:
                 'displayName': None
             }
         })
+
+class Notes:
+    def __init__(self):
+        self.db_manager = DatabaseManager()
+
+    def create_note(self):
+        account = Account()
+
+        DatabaseManager().query(
+            "INSERT INTO notes (owner_username, title, content) VALUES (?, ?, ?)",
+            (account.username, "New Note", "- This is a new note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature.")
+        )
+
+        get_note_id = DatabaseManager().query(
+            "SELECT MAX(note_id) FROM notes WHERE owner_username = ?",
+            (account.username,)
+        )
+
+        return get_note_id[0][0]
+
+    def delete_note(self, note_id):
+        account = Account()
+
+        note = DatabaseManager().query(
+            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
+            (note_id, account.username)
+        )
+
+        note_information = {
+            "id": note_id,
+            "title": note[0][0],
+            "content": note[0][1]
+        }
+
+        DatabaseManager().query(
+            "DELETE FROM notes WHERE note_id = ? AND owner_username = ?",
+            (note_id, account.username)
+        )
+
+        return note_information
+
+        def get_notes(note_ids=[]):
+            """
+            Always returns a list.
+            If note_ids is EMPTY, returns ALL user notes.
+            If note_ids has items, returns the specific notes.
+            If it cant find anything, returns an empty list.
+            """
+            return
+
+    def get_note_ids(self):
+         return self.db_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))

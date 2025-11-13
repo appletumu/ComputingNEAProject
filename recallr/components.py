@@ -1,8 +1,7 @@
 import customtkinter as tk
 import tkinter.messagebox as messagebox
-import sqlite3
-from recallr.backend import DatabaseManager, JsonManager
-from recallr.objects import Account, AppSettings
+from recallr.backend import DatabaseManager
+from recallr.objects import Account, AppSettings, Notes
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):
@@ -27,7 +26,7 @@ class ComponentManager:
         try:
             func(button)
         except TypeError as e:
-            print(f"❌ The button '{button.component_id}' has no associated action")
+            print(f"❌ The button '{button.component_id}' has no associated action, or has run into an error.\n\t> {e}")
 
             # Uncomment this if you need to find the error from here
             #raise e
@@ -335,21 +334,12 @@ class ComponentCommandHandler:
 
     def notes(self, component):
         self.screen_manager.show_screen("notes")
+
+    def blurting(self, component):
+        self.screen_manager.show_screen("blurting")
     
     def create_note(self, component):
-        account = Account()
-
-        DatabaseManager().query(
-            "INSERT INTO notes (owner_username, title, content) VALUES (?, ?, ?)",
-            (account.username, "New Note", "- This is a new note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature.")
-        )
-
-        get_note_id = DatabaseManager().query(
-            "SELECT MAX(note_id) FROM notes WHERE owner_username = ?",
-            (account.username,)
-        )
-
-        note_id = get_note_id[0][0]
+        note_id = Notes().create_note()
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
 
@@ -380,21 +370,11 @@ class ComponentCommandHandler:
         # Gets the note ID from the component ID
         note_id = component.component_id.split("_")[-1]
 
-        note = DatabaseManager().query(
-            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
-            (note_id, account.username)
-        )
-
-        note_title = note[0][0]
-
-        DatabaseManager().query(
-            "DELETE FROM notes WHERE note_id = ? AND owner_username = ?",
-            (note_id, account.username)
-        )
+        note_info = Notes().delete_note(note_id)
 
         self.screen_manager.show_screen("notes")
         new_component = Components(self.screen_manager, self.frame_manager)
-        new_component.default.message_box(message_box_type="info", message=f"Deleted the note '{note_title}' with the note ID '{note_id}'.")
+        new_component.default.message_box(message_box_type="info", message=f"Deleted the note '{note_info['title']}' with the note ID '{note_id}'.")
 
     def view_note(self, component):
         account = Account()

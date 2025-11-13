@@ -1,7 +1,7 @@
 import customtkinter as tk
 from recallr.frames import FrameManager, Frames
 from recallr.components import Components
-from recallr.objects import Account, AppSettings
+from recallr.objects import Account, Notes
 from recallr.backend import DatabaseManager
 
 def setup_screen(screen_type="menu"):
@@ -122,7 +122,7 @@ class Screens:
         main.default.content(text="Please pick which mode you would like to do!")
         main.default.button(text="Flashcards", component_id="coming_soon")
         main.default.button(text="Multiple choice", component_id="coming_soon")
-        main.default.button(text="Blurting", component_id="coming_soon")
+        main.default.button(text="Blurting", component_id="blurting")
         main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
@@ -142,7 +142,7 @@ class Screens:
         database_manager = DatabaseManager()
 
         sidebar = self.screen_manager.create_frame("sidebar")
-        all_notes = database_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
+        all_notes = Notes().get_note_ids()
 
         # Checks if a note is being viewed
         selected_note_id = None
@@ -159,6 +159,15 @@ class Screens:
 
             sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", state=button_state)
         sidebar.default.button(text="Create note")
+
+    @setup_screen(screen_type="menu")
+    def blurting(self, **kwargs):
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Blurting")
+        main.default.content(text="Please which notes you would like to blurt today!", padding=False)
+        for i in range(10):
+            main.default.content(text=f"- Note {i}")
+        main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
     def coming_soon(self):
