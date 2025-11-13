@@ -130,7 +130,7 @@ class Notes:
             Always returns a list.
             If note_ids is EMPTY, returns ALL user notes.
             If note_ids has items, returns the specific notes.
-            If it cant find anything, returns an empty list.
+            If it can't find anything, returns an empty list.
             """
             return
 
