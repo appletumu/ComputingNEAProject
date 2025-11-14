@@ -139,8 +139,6 @@ class Screens:
             note_taking = self.screen_manager.create_frame("note_taking")
             note_taking.custom.view_note_textbox(note_id=view_note_id)
 
-        database_manager = DatabaseManager()
-
         sidebar = self.screen_manager.create_frame("sidebar")
         all_notes = Notes().get_note_ids()
 
@@ -165,8 +163,11 @@ class Screens:
         main = self.screen_manager.create_frame()
         main.default.title(text="Blurting")
         main.default.content(text="Please which notes you would like to blurt today!", padding=False)
+
+        notes = Notes().get_notes()
         for i in range(10):
-            main.default.content(text=f"- Note {i}")
+            main.default.content(text=f"- {notes[i]['title']}", padding=False)
+            
         main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")

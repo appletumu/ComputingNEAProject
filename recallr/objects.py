@@ -128,14 +128,35 @@ class Notes:
 
         return note_information
 
-        def get_notes(note_ids=[]):
-            """
-            Always returns a list.
-            If note_ids is EMPTY, returns ALL user notes.
-            If note_ids has items, returns the specific notes.
-            If it can't find anything, returns an empty list.
-            """
-            return
+    def get_notes(self, note_ids=[]):
+        """
+        Always returns a list.
+        If note_ids is EMPTY, returns ALL user notes.
+        If note_ids has items, returns the specific notes.
+        If it can't find anything, returns an empty list.
+        """
+        
+        notes_db_dump = self.db_manager.query("SELECT note_id, title, content FROM notes WHERE owner_username = ?", (Account().username,))
+
+        notes = []
+
+        for note in notes_db_dump:
+            note_id, note_title, note_content = note
+
+            if note_ids == [] or note_id in note_ids:
+                notes.append({"id": note_id, "title": note_title, "content": note_content})
+
+        return notes
+    
+    def save_note(self, note_id, note_title, note_content):
+        account = Account()
+        
+        self.db_manager.query(
+            "UPDATE notes SET title = ?, content = ? WHERE note_id = ? AND owner_username = ?",
+            (note_title, note_content, note_id, account.username)
+        )
+
+        return True
 
     def get_note_ids(self):
          return self.db_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))

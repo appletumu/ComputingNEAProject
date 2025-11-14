@@ -182,25 +182,17 @@ class CustomComponents:
         self.frame_manager = frame_manager
     
     def view_note_button(self, **kwargs):
-        account = Account()
         component = Components(self.screen_manager, self.frame_manager)
         note_id = kwargs.pop('note_id', 1)
 
-        note = DatabaseManager().query(
-            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
-            (note_id, account.username)
-        )
-
-        note_title = note[0][0]
-        note_content = note[0][1]
-
         # Get the note / title from the database
-        if note and len(note) > 0 and len(note[0]) >= 2:
-            note_title = note[0][0] or "Untitled"
-            note_content = note[0][1] or  "No preview available"
-        else:
-            note_title = "Untitled"
-            note_content = "No preview available"
+        note = Notes().get_notes(note_ids=[note_id])[0]
+
+        note_title = note['title']
+        note_content = note['content']
+
+        note_title = note['title'] or "Untitled"
+        note_content = note['content'] or  "No preview available"
 
         # Collapse newlines and repeated spaces for both title and content
         title_max = kwargs.pop('title_max_chars', 22)
@@ -355,10 +347,7 @@ class ComponentCommandHandler:
         note_title = title_component.get("0.0", "end").strip()
         note_content = content_component.get("0.0", "end").strip()
 
-        DatabaseManager().query(
-            "UPDATE notes SET title = ?, content = ? WHERE note_id = ? AND owner_username = ?",
-            (note_title, note_content, note_id, account.username)
-        )
+        Notes().save_note(note_id, note_title, note_content)
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
         new_component = Components(self.screen_manager, self.frame_manager)
@@ -381,10 +370,5 @@ class ComponentCommandHandler:
 
         # Gets the note ID from the component ID
         note_id = component.component_id.split("_")[-1]
-
-        note = DatabaseManager().query(
-            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
-            (note_id, account.username)
-        )
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
