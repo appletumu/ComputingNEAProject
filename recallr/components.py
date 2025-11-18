@@ -58,11 +58,26 @@ class DefaultComponents:
         text_size = app_settings.text_sizes['content']
         self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=(font, text_size), **kwargs)
 
-    def check_box(self, component_id=None, **kwargs):
+    def check_box(self, component_id=None, check_box_style="default", **kwargs):
         app_settings = AppSettings()
         font = app_settings.font
         text_size = app_settings.text_sizes['content']
-        self.frame_manager.create_component(tk.CTkCheckBox, component_id=component_id, font=(font, text_size), **kwargs)
+        button_colors = app_settings.colors
+
+        if check_box_style not in button_colors:
+            raise ValueError(f"Unknown check_box_style '{check_box_style}'. Available types: {list(button_colors.keys())}")
+
+        selected_colour = check_box_style
+
+        self.frame_manager.create_component(
+            tk.CTkCheckBox, 
+            component_id=component_id, 
+            font=(font, text_size), 
+            fg_color=button_colors[selected_colour]['fg_color'],
+            hover_color=button_colors[selected_colour]['hover_color'],
+            border_width=2,
+            **kwargs
+        )
 
     def entry_field(self, component_id=None, **kwargs):
         app_settings = AppSettings()
@@ -373,3 +388,21 @@ class ComponentCommandHandler:
         note_id = component.component_id.split("_")[-1]
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
+    
+    def select_blurting_notes(self, component):
+        notes_selected = []
+        for frame_component in self.frame_manager.components:
+            if isinstance(frame_component, tk.CTkCheckBox) == False:
+                continue
+            
+            # Checks if the CheckBox is checked, if so adds it to the list
+            if frame_component.get():
+                note_id = frame_component.component_id.split("_")[-1]
+                notes_selected.append(note_id)
+        
+        new_component = Components(self.screen_manager, self.frame_manager)
+
+        if len(notes_selected) > 0:
+            new_component.default.message_box(message_box_type="info", message=f"Selected the following notes:\n\n{notes_selected}")
+        else:
+            new_component.default.message_box(message_box_type="warning", message=f"You need to select at least one note to blurt.")

@@ -175,7 +175,7 @@ class Screens:
             title = note['title']
             title_preview = Notes().make_preview(title, max_chars=50)
             
-            main.default.check_box(text=title_preview, component_id = f"note_{note['id']}",padding=False)
+            main.default.check_box(text=f"{title_preview} ({note['id']})", component_id = f"note_{note['id']}",padding=False)
         
         main.default.button(text="Select notes", component_id="select_blurting_notes")
         main.custom.main_menu_button()  
