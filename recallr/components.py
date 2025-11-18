@@ -305,8 +305,8 @@ class ComponentCommandHandler:
         account = Account()
         result = account.login(username, password)
 
-        if result["sucess"]:
-            # Sucessful login
+        if result["success"]:
+            # successful login
             self.screen_manager.show_screen("main_menu")
         else:
             # Failed login
@@ -326,8 +326,8 @@ class ComponentCommandHandler:
         account = Account()
         result = account.create_account(display_name, new_username, new_password, confirm_password)
 
-        if result["sucess"]:
-            # Sucessfully created an account
+        if result["success"]:
+            # successfully created an account
             self.screen_manager.show_screen("login")
             new_component.default.message_box(message_box_type="info", message=result["message"]) 
         else:

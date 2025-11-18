@@ -29,7 +29,7 @@ class Account:
         if username in accounts:
             stored_password = self.db_manager.query("SELECT password FROM accounts WHERE username = ?", (username,))[0][0]
         else:
-            return {"sucess": False, "message": "Invalid login details"}
+            return {"success": False, "message": "Invalid login details"}
 
         if password == stored_password:
             # Adds user account to the settings file
@@ -43,10 +43,10 @@ class Account:
                 }
             })
 
-            # Only sucessful after the account info had been saved in the database / config
-            return {"sucess": True, "message": ""}
+            # Only successful after the account info had been saved in the database / config
+            return {"success": True, "message": ""}
         else:
-            return {"sucess": False, "message": "Invalid login details"}
+            return {"success": False, "message": "Invalid login details"}
         
 
     def sign_out(self):
@@ -62,11 +62,11 @@ class Account:
         accounts = self.db_manager.query("SELECT username FROM accounts")
 
         if confirm_password != None and new_password != confirm_password:
-            return {"sucess": False, "message": "Passwords do not match"}
+            return {"success": False, "message": "Passwords do not match"}
         elif not display_name or not new_username or not new_password:
-            return {"sucess": False, "message": "None of the fields can be empty"}
+            return {"success": False, "message": "None of the fields can be empty"}
         elif new_username in accounts:
-            return {"sucess": False, "message": "Username already exists. Please choose a different one"}
+            return {"success": False, "message": "Username already exists. Please choose a different one"}
         
 
         # Checks that the username is in lower case, only has letters/numbers, and no spaces
@@ -74,14 +74,14 @@ class Account:
         def is_valid_string(s: str) -> bool:
             return bool(re.fullmatch(r"[a-z0-9_]+", s))
         if is_valid_string(new_username) == False:
-            return {"sucess": False, "message": "That is not a valid username. Must only have lowercases letters/numbers with underscores for spaces.\n\nExamples: 'username_123', 'valid_username"}
+            return {"success": False, "message": "That is not a valid username. Must only have lowercases letters/numbers with underscores for spaces.\n\nExamples: 'username_123', 'valid_username'"}
         
         try:
-            # Sucessfully created an account
+            # successfully created an account
             self.db_manager.query("INSERT INTO accounts (username, display_name, password) VALUES (?, ?, ?)", (new_username, display_name, new_password))
-            return {"sucess": True, "message": f"Succesfully created an account for '{new_username}'. Please log in again"}
+            return {"success": True, "message": f"Succesfully created an account for '{new_username}'. Please log in again"}
         except sqlite3.IntegrityError:
-            return {"sucess": False, "message": "This username is already taken"}
+            return {"success": False, "message": "This username is already taken"}
     
     def delete_account(self):
         db_manager = DatabaseManager()

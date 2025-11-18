@@ -44,12 +44,12 @@ class WindowManager(tk.CTk):
             screen_manager.show_screen("login")
 
         print("-"*30)
-        print("🪟 'WindowManager' sucessfully started up.")
+        print("🪟 'WindowManager' successfully started up.")
 
         # Forces the window to be at the very top
         self.focus_force()
 
         self.mainloop()
         print("-"*30)
-        print("🪟 'WindowManager' loop has been broken.")
+        print("🪟 'WindowManager' session has been ended.")
     
