@@ -65,7 +65,7 @@ class DefaultComponents:
         button_colors = app_settings.colors
 
         if check_box_style not in button_colors:
-            raise ValueError(f"Unknown check_box_style '{check_box_style}'. Available types: {list(button_colors.keys())}")
+            raise ValueError(f"Unknown check_box style '{check_box_style}'. Available types: {list(button_colors.keys())}")
 
         selected_colour = check_box_style
 
@@ -121,7 +121,7 @@ class DefaultComponents:
         button_colors = app_settings.colors
 
         if button_type not in button_colors:
-            raise ValueError(f"Unknown button_type '{button_type}'. Available types: {list(button_colors.keys())}")
+            raise ValueError(f"Unknown button style or type '{button_type}'. Available styles: {list(button_colors.keys())}")
 
         if button_style == None:
             selected_button_colour = button_type
