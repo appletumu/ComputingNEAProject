@@ -28,6 +28,7 @@ class ScreenManager(tk.CTkFrame):
         frame_manager = FrameManager(self)
 
         frame = Frames(frame_manager)
+        frame_manager.id = frame_name
 
         func = getattr(frame, frame_name, None)
 
@@ -72,7 +73,7 @@ class ScreenManager(tk.CTkFrame):
         for frame in self.frames:
             frame.load_components()
 
-            print(f"🎞️ '{frame}' frame has been loaded.")
+            print(f"🎞️ '{frame.id}' frame has been loaded.")
         
         print(f"🔲 '{function_name}' screen has been loaded.")
 
