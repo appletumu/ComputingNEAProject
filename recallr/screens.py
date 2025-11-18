@@ -166,7 +166,12 @@ class Screens:
         main.default.content(text="Please which notes you would like to blurt today!", padding=False)
 
         notes = Notes().get_notes()
-        for i in range(10):
+        num_of_notes_to_show = 10
+        if len(notes) < 10:
+            num_of_notes_to_show = len(notes)
+
+        for i in range(num_of_notes_to_show):
+            print(len(notes), i, sep="\n")
             main.default.content(text=f"- {notes[i]['title']}", padding=False)
             
         main.custom.main_menu_button()
