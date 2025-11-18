@@ -47,16 +47,28 @@ class DefaultComponents:
         app_settings = AppSettings()
         if text == None:
             text = app_settings.app_name
-
         font = app_settings.font
         text_size = app_settings.text_sizes['title']
-        self.frame_manager.create_component(tk.CTkLabel, text=text, component_id=component_id, font=(font, text_size), **kwargs)
+
+        self.frame_manager.create_component(
+            tk.CTkLabel, 
+            text=text, 
+            component_id=component_id, 
+            font=(font, text_size), 
+            **kwargs
+        )
 
     def content(self, component_id="content", **kwargs):
         app_settings = AppSettings()
         font = app_settings.font
         text_size = app_settings.text_sizes['content']
-        self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=(font, text_size), **kwargs)
+
+        self.frame_manager.create_component(
+            tk.CTkLabel, 
+            component_id=component_id, 
+            font=(font, text_size), 
+            **kwargs
+        )
 
     def check_box(self, component_id=None, check_box_style="default", **kwargs):
         app_settings = AppSettings()
@@ -84,7 +96,15 @@ class DefaultComponents:
         font = app_settings.font
         text_size = app_settings.text_sizes["content"]
         component_size = app_settings.component_configs["entryField"]
-        self.frame_manager.create_component(tk.CTkEntry, component_id=component_id, font=(font, text_size), width=200, height=40, **kwargs)
+
+        self.frame_manager.create_component(
+            tk.CTkEntry, 
+            component_id=component_id, 
+            font=(font, text_size), 
+            width=200, 
+            height=40, 
+            **kwargs
+        )
 
     def text_box(self, component_id=None, textbox_size="content", width=None, height=None, **kwargs):
         app_settings = AppSettings()
@@ -116,7 +136,7 @@ class DefaultComponents:
     def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, command=None, **kwargs):
         app_settings = AppSettings()
         font = app_settings.font
-        textbox_size = app_settings.text_sizes["content"]
+        text_size = app_settings.text_sizes["content"]
         component_size = app_settings.component_configs["button"]
         button_colors = app_settings.colors
 
@@ -133,7 +153,7 @@ class DefaultComponents:
             component_id=component_id,
             padding=padding,
             text=text,
-            font=("Arial", 16),
+            font=(font, text_size),
             width=200, height=40,
             command=command,
             fg_color=button_colors[selected_button_colour]['fg_color'],
@@ -186,7 +206,11 @@ class DefaultComponents:
                 except Exception:
                     pass
 
-    def message_box(self, component_id=None, message_box_type="info", title="Recallr", message="", **kwargs):
+    def message_box(self, component_id="message_box", message_box_type="info", title=None, message="", **kwargs):
+        app_settings = AppSettings()
+        if title == None:
+            title = app_settings.app_name
+
         if message_box_type == "info":
             messagebox.showinfo("Recallr", message)
         elif message_box_type == "warning":
