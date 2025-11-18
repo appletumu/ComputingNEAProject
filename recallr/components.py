@@ -58,6 +58,12 @@ class DefaultComponents:
         text_size = app_settings.text_sizes['content']
         self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=(font, text_size), **kwargs)
 
+    def check_box(self, component_id="check_box", **kwargs):
+        app_settings = AppSettings()
+        font = app_settings.font
+        text_size = app_settings.text_sizes['content']
+        self.frame_manager.create_component(tk.CTkCheckBox, component_id=component_id, font=(font, text_size), **kwargs)
+
     def entry_field(self, component_id=None, **kwargs):
         app_settings = AppSettings()
         font = app_settings.font

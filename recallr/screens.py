@@ -174,7 +174,7 @@ class Screens:
             title = notes[i]['title']
             title_preview = Notes().make_preview(title, max_chars=50)
             
-            main.default.content(text=f"- {title_preview}", padding=False)
+            main.default.check_box(text=title_preview, padding=False)
             
         main.custom.main_menu_button()
 
