@@ -43,38 +43,34 @@ class DefaultComponents:
         self.screen_manager = screen_manager
         self.frame_manager = frame_manager
 
+        self.app_settings = AppSettings()
+        self.font = self.app_settings.font
+        self.title_size = self.app_settings.text_sizes['title']
+        self.content_size = self.app_settings.text_sizes['content']
+        self.colors = self.app_settings.colors
+
     def title(self, text=None, component_id="title", **kwargs):
-        app_settings = AppSettings()
         if text == None:
-            text = app_settings.app_name
-        font = app_settings.font
-        text_size = app_settings.text_sizes['title']
+            text = self.app_settings.app_name
 
         self.frame_manager.create_component(
             tk.CTkLabel, 
             text=text, 
             component_id=component_id, 
-            font=(font, text_size), 
+            font=(self.font, self.title_size), 
             **kwargs
         )
 
     def content(self, component_id="content", **kwargs):
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes['content']
-
         self.frame_manager.create_component(
             tk.CTkLabel, 
             component_id=component_id, 
-            font=(font, text_size), 
+            font=(self.font, self.content_size), 
             **kwargs
         )
 
     def check_box(self, component_id=None, check_box_style="default", **kwargs):
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes['content']
-        button_colors = app_settings.colors
+        button_colors = self.app_settings.colors
 
         if check_box_style not in button_colors:
             raise ValueError(f"Unknown check_box style '{check_box_style}'. Available types: {list(button_colors.keys())}")
@@ -84,7 +80,7 @@ class DefaultComponents:
         self.frame_manager.create_component(
             tk.CTkCheckBox, 
             component_id=component_id, 
-            font=(font, text_size), 
+            font=(self.font, self.content_size), 
             fg_color=button_colors[selected_colour]['fg_color'],
             hover_color=button_colors[selected_colour]['hover_color'],
             border_width=2,
@@ -92,24 +88,19 @@ class DefaultComponents:
         )
 
     def entry_field(self, component_id=None, **kwargs):
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes["content"]
-        component_size = app_settings.component_configs["entryField"]
+        component_size = self.app_settings.component_configs["entryField"]
 
         self.frame_manager.create_component(
             tk.CTkEntry, 
             component_id=component_id, 
-            font=(font, text_size), 
+            font=(self.font, self.content_size), 
             width=200, 
             height=40, 
             **kwargs
         )
 
     def text_box(self, component_id=None, textbox_size="content", width=None, height=None, **kwargs):
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes[textbox_size]
+        text_size = self.app_settings.text_sizes[textbox_size]
 
         # textbox_size is a key: 'title' or 'content'
 
@@ -121,27 +112,23 @@ class DefaultComponents:
         wrap = "word"
 
         # If font size is a title, disable wrapping
-        if text_size == app_settings.text_sizes['title']:
+        if text_size == self.title_size:
             wrap = "none"
         
         self.frame_manager.create_component(
             tk.CTkTextbox, 
             component_id=component_id, 
-            font=(font, text_size), 
+            font=(self.font, text_size), 
             width=width, height=height,
             wrap=wrap,
             **kwargs
         )
 
     def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, command=None, **kwargs):
-        app_settings = AppSettings()
-        font = app_settings.font
-        text_size = app_settings.text_sizes["content"]
-        component_size = app_settings.component_configs["button"]
-        button_colors = app_settings.colors
+        component_size = self.app_settings.component_configs["button"]
 
-        if button_type not in button_colors:
-            raise ValueError(f"Unknown button style or type '{button_type}'. Available styles: {list(button_colors.keys())}")
+        if button_type not in self.colors:
+            raise ValueError(f"Unknown button style or type '{button_type}'. Available styles: {list(self.colors.keys())}")
 
         if button_style == None:
             selected_button_colour = button_type
@@ -153,18 +140,18 @@ class DefaultComponents:
             component_id=component_id,
             padding=padding,
             text=text,
-            font=(font, text_size),
+            font=(self.font, self.content_size),
             width=200, height=40,
             command=command,
-            fg_color=button_colors[selected_button_colour]['fg_color'],
-            hover_color=button_colors[selected_button_colour]['hover_color'],
+            fg_color=self.colors[selected_button_colour]['fg_color'],
+            hover_color=self.colors[selected_button_colour]['hover_color'],
             **kwargs
         )
 
         # If the button is disabled, makes the fg_color as selected.
         state = button_instance.cget("state")
         if state == "disabled":
-            button_instance.configure(fg_color=button_colors[selected_button_colour]['hover_color'])
+            button_instance.configure(fg_color=self.colors[selected_button_colour]['hover_color'])
 
         component_manager = ComponentManager(screen_manager=self.screen_manager, frame_manager=self.frame_manager)
 
@@ -207,9 +194,8 @@ class DefaultComponents:
                     pass
 
     def message_box(self, component_id="message_box", message_box_type="info", title=None, message="", **kwargs):
-        app_settings = AppSettings()
         if title == None:
-            title = app_settings.app_name
+            title = self.app_settings.app_name
 
         if message_box_type == "info":
             messagebox.showinfo("Recallr", message)
