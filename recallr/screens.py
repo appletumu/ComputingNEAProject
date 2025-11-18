@@ -176,12 +176,4 @@ class Screens:
             
             main.default.check_box(text=title_preview, padding=False)
             
-        main.custom.main_menu_button()
-
-    @setup_screen(screen_type="menu")
-    def coming_soon(self):
-        main = self.screen_manager.create_frame()
-        main.default.title()
-        main.default.content(text="Coming Soon!")
-        main.custom.main_menu_button()
-        main.custom.sign_out_button()
+        main.custom.main_menu_button()  

@@ -322,7 +322,8 @@ class ComponentCommandHandler:
         new_component.default.message_box(message_box_type="info", message="Successfully signed out")
 
     def coming_soon(self, component):
-        self.screen_manager.show_screen("coming_soon")
+        new_component = Components(self.screen_manager, self.frame_manager)
+        new_component.default.message_box(message_box_type="warning", message="Coming Soon") 
 
     def main_menu(self, component):
         self.screen_manager.show_screen("main_menu")
@@ -342,8 +343,6 @@ class ComponentCommandHandler:
         self.screen_manager.show_screen("notes", view_note_id=note_id)
 
     def save_note(self, component):
-        account = Account()
-
         # Gets the note ID from the component ID
         note_id = component.component_id.split("_")[-1]
 
@@ -360,8 +359,6 @@ class ComponentCommandHandler:
         new_component.default.message_box(message_box_type="info", message=f"Saved the note '{note_title}' with the note ID '{note_id}'.")
 
     def delete_note(self, component):
-        account = Account()
-
         # Gets the note ID from the component ID
         note_id = component.component_id.split("_")[-1]
 
@@ -372,8 +369,6 @@ class ComponentCommandHandler:
         new_component.default.message_box(message_box_type="info", message=f"Deleted the note '{note_info['title']}' with the note ID '{note_id}'.")
 
     def view_note(self, component):
-        account = Account()
-
         # Gets the note ID from the component ID
         note_id = component.component_id.split("_")[-1]
 
