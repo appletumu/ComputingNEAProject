@@ -160,7 +160,7 @@ class Screens:
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
-    def blurting(self, **kwargs):
+    def blurting_menu_selection(self, **kwargs):
         main = self.screen_manager.create_frame()
         main.default.title(text="Blurting")
         main.default.content(text="Please which notes you would like to blurt today!", padding=False)
@@ -171,9 +171,11 @@ class Screens:
             num_of_notes_to_show = len(notes)
 
         for i in range(num_of_notes_to_show):
-            title = notes[i]['title']
+            note = notes[i]
+            title = note['title']
             title_preview = Notes().make_preview(title, max_chars=50)
             
-            main.default.check_box(text=title_preview, padding=False)
-            
+            main.default.check_box(text=title_preview, component_id = f"note_{note['id']}",padding=False)
+        
+        main.default.button(text="Select notes", component_id="select_blurting_notes")
         main.custom.main_menu_button()  

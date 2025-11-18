@@ -58,7 +58,7 @@ class DefaultComponents:
         text_size = app_settings.text_sizes['content']
         self.frame_manager.create_component(tk.CTkLabel, component_id=component_id, font=(font, text_size), **kwargs)
 
-    def check_box(self, component_id="check_box", **kwargs):
+    def check_box(self, component_id=None, **kwargs):
         app_settings = AppSettings()
         font = app_settings.font
         text_size = app_settings.text_sizes['content']
@@ -335,7 +335,7 @@ class ComponentCommandHandler:
         self.screen_manager.show_screen("notes")
 
     def blurting(self, component):
-        self.screen_manager.show_screen("blurting")
+        self.screen_manager.show_screen("blurting_menu_selection")
     
     def create_note(self, component):
         note_id = Notes().create_note()
