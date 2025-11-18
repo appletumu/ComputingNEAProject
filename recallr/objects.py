@@ -1,5 +1,6 @@
 import sqlite3
 from recallr.backend import JsonManager, DatabaseManager
+import re
 
 class AppSettings:
     def __init__(self):
@@ -66,6 +67,14 @@ class Account:
             return {"sucess": False, "message": "None of the fields can be empty"}
         elif new_username in accounts:
             return {"sucess": False, "message": "Username already exists. Please choose a different one"}
+        
+
+        # Checks that the username is in lower case, only has letters/numbers, and no spaces
+        # Examples of valid usernames: "testing_account", "123_yes", "okay_that_is_cool", "yesman_2"
+        def is_valid_string(s: str) -> bool:
+            return bool(re.fullmatch(r"[a-z0-9_]+", s))
+        if is_valid_string(new_username) == False:
+            return {"sucess": False, "message": "That is not a valid username. Must only have lowercases letters/numbers with underscores for spaces.\n\nExamples: 'username_123', 'valid_username"}
         
         try:
             # Sucessfully created an account

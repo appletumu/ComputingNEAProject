@@ -1,8 +1,8 @@
 {
     "appName": "Recallr",
     "account": {
-        "username": "harnek",
-        "displayName": "Harnek Singh"
+        "username": null,
+        "displayName": null
     },
     "font": "Arial",
     "textSizes": {
