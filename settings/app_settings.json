@@ -59,5 +59,9 @@
     "createNotePlaceholdertext": {
         "title": "New Note",
         "content": "- This is a note!\n- You can write your content here.\n- Test your knowledge by using the Blurting feature."
+    },
+    "truncateNotePreviewsBy": {
+        "noteButtonPreview": 18,
+        "blurtingMenuPreview": 30
     }
 }

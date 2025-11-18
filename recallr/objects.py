@@ -10,6 +10,7 @@ class AppSettings:
         self.text_sizes = json_manager.read_json('textSizes')
         self.component_configs = json_manager.read_json("componentConfigs")
         self.colors = json_manager.read_json("colors")
+
 class Account:
     def __init__(self):
         json_manager = JsonManager("settings/app_settings.json")
@@ -160,3 +161,10 @@ class Notes:
 
     def get_note_ids(self):
          return self.db_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
+
+    def make_preview(self, text, max_chars=18):
+        # Collapse newlines and repeated spaces for both title and content
+        s = ' '.join(str(text).split())
+        if len(s) > max_chars:
+            return s[:max_chars].rstrip() + '...'
+        return s

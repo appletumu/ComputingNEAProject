@@ -171,8 +171,10 @@ class Screens:
             num_of_notes_to_show = len(notes)
 
         for i in range(num_of_notes_to_show):
-            print(len(notes), i, sep="\n")
-            main.default.content(text=f"- {notes[i]['title']}", padding=False)
+            title = notes[i]['title']
+            title_preview = Notes().make_preview(title, max_chars=50)
+            
+            main.default.content(text=f"- {title_preview}", padding=False)
             
         main.custom.main_menu_button()
 
