@@ -300,6 +300,18 @@ class CustomComponents:
 
         component.default.button(text="Sign out", button_type="red", **kwargs)
 
+    def page_blurting_selection_button(self, text, page, button_state, selected_notes, **kwargs):
+        component = Components(self.screen_manager, self.frame_manager)
+        
+        component.default.button(
+            text=text, 
+            component_id=f"blurting_selection_page_{page}", 
+            command="change_page_blurting_selection", 
+            button_type="default", 
+            state=button_state,
+            padding=False
+        )
+
 class ComponentCommandHandler:
     def __init__(self, screen_manager, frame_manager):
         self.screen_manager = screen_manager

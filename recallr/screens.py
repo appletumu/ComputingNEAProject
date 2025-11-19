@@ -161,7 +161,7 @@ class Screens:
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
-    def blurting_menu_selection(self, page_number=1, **kwargs):
+    def blurting_menu_selection(self, page_number=1, selected_notes=[], **kwargs):
         main = self.screen_manager.create_frame()
         main.default.title(text="Blurting")
         main.default.content(text="Please which notes you would like to blurt today!")
@@ -201,21 +201,17 @@ class Screens:
         
         main.default.button(f"Page {page.page} / {page.page_count}", button_type="grey", state=tk.DISABLED)
         # Component IDs either end with the next/previous page, or "None"
-        main.default.button(
-            text="Next page", 
-            component_id=f"blurting_selection_page_{page.next_page}", 
-            command="change_page_blurting_selection", 
-            button_type="default", 
-            state=next_button_state,
-            padding=False
+        main.custom.page_blurting_selection_button(
+            text="Next page",
+            page=page.next_page,
+            button_state=next_button_state,
+            selected_notes=selected_notes
         )
-        main.default.button(
-            text="Previous page", 
-            component_id=f"blurting_selection_page_{page.previous_page}", 
-            command="change_page_blurting_selection", 
-            button_type="default", 
-            state=previous_button_state,
-            padding=False
+        main.custom.page_blurting_selection_button(
+            text="Previous page",
+            page=page.previous_page,
+            button_state=previous_button_state,
+            selected_notes=selected_notes
         )
 
         main.default.button(text="Select notes", component_id="select_blurting_notes", button_type="primary", button_style="green")
