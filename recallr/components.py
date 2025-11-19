@@ -69,7 +69,7 @@ class DefaultComponents:
             **kwargs
         )
 
-    def check_box(self, component_id=None, check_box_style="default", **kwargs):
+    def check_box(self, component_id=None, check_box_style="default", disabled=False, **kwargs):
         button_colors = self.app_settings.colors
 
         if check_box_style not in button_colors:
@@ -77,13 +77,22 @@ class DefaultComponents:
 
         selected_colour = check_box_style
 
+        if disabled == True:
+            state = tk.DISABLED
+            border_color="#A0A0A0"
+        else:
+            state = tk.NORMAL
+            border_color = None
+
         self.frame_manager.create_component(
             tk.CTkCheckBox, 
             component_id=component_id, 
             font=(self.font, self.content_size), 
+            border_color=border_color,
             fg_color=button_colors[selected_colour]['fg_color'],
             hover_color=button_colors[selected_colour]['hover_color'],
             border_width=2,
+            state=state,
             **kwargs
         )
 

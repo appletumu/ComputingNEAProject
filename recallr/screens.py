@@ -168,12 +168,13 @@ class Screens:
 
         # Gets the ntoes
         notes = Notes().get_notes()
+        items_per_page = 10
 
         # Creates pagination
         page = Page(
             notes,
             page=page_number,
-            items_per_page=10,
+            items_per_page=items_per_page,
             item_count=len(notes)
         )
 
@@ -181,13 +182,41 @@ class Screens:
         for item in page:
             title = item['title']
             title_preview = Notes().make_preview(title, max_chars=50)
+            note_id = item['id']
             
-            main.default.check_box(text=f"{title_preview} ({item['id']})", component_id = f"note_{item['id']}",padding=False)
+            main.default.check_box(text=title_preview, component_id = f"note_{item['id']}",padding=False)
+        # Adds placeholders if there were less items than in the max 'items_per_page'
+        remaining = max(0, min(items_per_page, items_per_page - len(page)))
+        for i in range(remaining):
+            main.default.check_box(text=" ", disabled=True, padding=False)
+
+        # Checks the next and previous page numbers, to see if it needs to disabled any of the buttons
+        next_button_state = tk.NORMAL
+        if page.next_page == None:
+            next_button_state = tk.DISABLED
+        previous_button_state = tk.NORMAL
+        if page.previous_page == None:
+            previous_button_state = tk.DISABLED
+
         
         main.default.button(f"Page {page.page} / {page.page_count}", button_type="grey", state=tk.DISABLED)
         # Component IDs either end with the next/previous page, or "None"
-        main.default.button("Next page", component_id=f"blurting_selection_page_{page.next_page}", command="change_page_blurting_selection", button_type="default", padding=False)
-        main.default.button("Previous page", component_id=f"blurting_selection_page_{page.previous_page}", command="change_page_blurting_selection", button_type="default", padding=False)
+        main.default.button(
+            text="Next page", 
+            component_id=f"blurting_selection_page_{page.next_page}", 
+            command="change_page_blurting_selection", 
+            button_type="default", 
+            state=next_button_state,
+            padding=False
+        )
+        main.default.button(
+            text="Previous page", 
+            component_id=f"blurting_selection_page_{page.previous_page}", 
+            command="change_page_blurting_selection", 
+            button_type="default", 
+            state=previous_button_state,
+            padding=False
+        )
 
         main.default.button(text="Select notes", component_id="select_blurting_notes", button_type="primary", button_style="green")
         main.custom.main_menu_button()  
