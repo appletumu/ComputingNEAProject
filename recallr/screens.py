@@ -177,5 +177,8 @@ class Screens:
             
             main.default.check_box(text=f"{title_preview} ({note['id']})", component_id = f"note_{note['id']}",padding=False)
         
-        main.default.button(text="Select notes", component_id="select_blurting_notes")
+        main.default.button("Page 1 / 1", button_type="grey", state=tk.DISABLED)
+        main.default.button("Next page", component_id="next_page_blurting_selection", button_type="default", padding=False)
+        main.default.button("Previous page", component_id="previous_page_blurting_selection", button_type="default", padding=False)
+        main.default.button(text="Select notes", component_id="select_blurting_notes", button_type="primary", button_style="green")
         main.custom.main_menu_button()  
