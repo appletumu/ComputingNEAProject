@@ -161,7 +161,7 @@ class Screens:
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
-    def blurting_menu_selection(self, **kwargs):
+    def blurting_menu_selection(self, page_number=1, **kwargs):
         main = self.screen_manager.create_frame()
         main.default.title(text="Blurting")
         main.default.content(text="Please which notes you would like to blurt today!")
@@ -169,19 +169,13 @@ class Screens:
         # Gets the ntoes
         notes = Notes().get_notes()
 
-        # Manages pagination
+        # Creates pagination
         page = Page(
             notes,
-            page=1,
+            page=page_number,
             items_per_page=10,
             item_count=len(notes)
         )
-
-        print("Items on this page:", page.items)
-        print("Current page number:", page.page)
-        print("Total pages:", page.page_count)
-        print("Has next page:", page.next_page is not None)
-        print("Has previous page:", page.previous_page is not None)
 
         # Displays the page
         for item in page:
@@ -191,7 +185,9 @@ class Screens:
             main.default.check_box(text=f"{title_preview} ({item['id']})", component_id = f"note_{item['id']}",padding=False)
         
         main.default.button(f"Page {page.page} / {page.page_count}", button_type="grey", state=tk.DISABLED)
-        main.default.button("Next page", component_id="next_page_blurting_selection", button_type="default", padding=False)
-        main.default.button("Previous page", component_id="previous_page_blurting_selection", button_type="default", padding=False)
+        # Component IDs either end with the next/previous page, or "None"
+        main.default.button("Next page", component_id=f"blurting_selection_page_{page.next_page}", command="change_page_blurting_selection", button_type="default", padding=False)
+        main.default.button("Previous page", component_id=f"blurting_selection_page_{page.previous_page}", command="change_page_blurting_selection", button_type="default", padding=False)
+
         main.default.button(text="Select notes", component_id="select_blurting_notes", button_type="primary", button_style="green")
         main.custom.main_menu_button()  

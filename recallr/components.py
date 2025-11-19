@@ -399,6 +399,10 @@ class ComponentCommandHandler:
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
     
+    def change_page_blurting_selection(self, component):
+        page_number = component.component_id.split("_")[-1]
+        self.screen_manager.show_screen("blurting_menu_selection", page_number=page_number)
+    
     def select_blurting_notes(self, component):
         notes_selected = []
         for frame_component in self.frame_manager.components:
