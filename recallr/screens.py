@@ -163,7 +163,7 @@ class Screens:
     def blurting_menu_selection(self, **kwargs):
         main = self.screen_manager.create_frame()
         main.default.title(text="Blurting")
-        main.default.content(text="Please which notes you would like to blurt today!", padding=False)
+        main.default.content(text="Please which notes you would like to blurt today!")
 
         notes = Notes().get_notes()
         num_of_notes_to_show = 10
