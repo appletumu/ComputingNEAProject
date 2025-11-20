@@ -179,6 +179,18 @@ class Notes:
             return s[:max_chars].rstrip() + '...'
         return s
     
+    def get_note_data_from_components(self, component, frame_manager):
+        # Gets the note ID from the component ID
+        note_id = component.component_id.split("_")[-1]
+
+        title_component = frame_manager.find_component(f"notes_title_textbox_{note_id}")
+        content_component = frame_manager.find_component(f"notes_content_textbox_{note_id}")
+
+        note_title = title_component.get("0.0", "end").strip()
+        note_content = content_component.get("0.0", "end").strip()
+
+        return {"id": note_id, "title": note_title, "content": note_content}
+    
     def select_notes_blurt(self, frame_manager, previous_selected_notes):
         notes_selected = []
         notes_not_selected = []

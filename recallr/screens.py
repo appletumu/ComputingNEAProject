@@ -139,7 +139,7 @@ class Screens:
             main.custom.main_menu_button()
         else:
             note_taking = self.screen_manager.create_frame("note_taking")
-            note_taking.custom.view_note_textbox(note_id=view_note_id)
+            note_taking.custom.view_note_textbox(note_id=int(view_note_id))
 
         sidebar = self.screen_manager.create_frame("sidebar")
         all_notes = Notes().get_note_ids()

@@ -267,14 +267,11 @@ class CustomComponents:
         account = Account()
         component = Components(self.screen_manager, self.frame_manager)
 
-        note = DatabaseManager().query(
-            "SELECT title, content FROM notes WHERE note_id = ? AND owner_username = ?",
-            (note_id, account.username)
-        )
+        note = Notes().get_notes(note_ids=[note_id])[0]
 
         # Gets note info from db
-        note_title = note[0][0]
-        note_content = note[0][1]
+        note_title = note['title']
+        note_content = note['content']
 
         # If it equals None, makes it "" to prevent an _tkinter.TclError
         if note_title == None:
@@ -290,7 +287,8 @@ class CustomComponents:
         component.default.text_box(component_id=f"notes_content_textbox_{note_id}", **kwargs)
         component.default.button(text="Save note", component_id=f"save_note_{note_id}", button_type="default", command="save_note")
         component.default.button(text="Delete note", component_id=f"delete_note_{note_id}", button_type="red", command="delete_note")
-        component.custom.main_menu_button()
+        component.custom.go_to_notes_selection_button(note_id=note_id)
+        #component.custom.main_menu_button()
 
         title = self.frame_manager.find_component(f"notes_title_textbox_{note_id}")
         content = self.frame_manager.find_component(f"notes_content_textbox_{note_id}")
@@ -298,6 +296,10 @@ class CustomComponents:
         # Inserts the note title and content into the text box
         title.insert("0.0", note_title)
         content.insert("0.0", note_content)
+
+    def go_to_notes_selection_button(self, note_id, **kwargs):
+        component = Components(self.screen_manager, self.frame_manager)
+        component.default.button(text="Go back", component_id=f"go_to_notes_selection_from_{note_id}", button_type="grey", command="go_to_notes_selection")
 
     def password_entry_field(self, placeholder_text="Password", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
@@ -403,20 +405,13 @@ class ComponentCommandHandler:
         self.screen_manager.show_screen("notes", view_note_id=note_id)
 
     def save_note(self, component):
-        # Gets the note ID from the component ID
-        note_id = component.component_id.split("_")[-1]
+        notes = Notes()
+        note_data = notes.get_note_data_from_components(component, self.frame_manager)
+        notes.save_note(note_data['id'], note_data['title'], note_data['content'])
 
-        title_component = self.frame_manager.find_component(f"notes_title_textbox_{note_id}")
-        content_component = self.frame_manager.find_component(f"notes_content_textbox_{note_id}")
-
-        note_title = title_component.get("0.0", "end").strip()
-        note_content = content_component.get("0.0", "end").strip()
-
-        Notes().save_note(note_id, note_title, note_content)
-
-        self.screen_manager.show_screen("notes", view_note_id=note_id)
+        self.screen_manager.show_screen("notes", view_note_id=note_data['id'])
         new_component = Components(self.screen_manager, self.frame_manager)
-        new_component.default.message_box(message_box_type="info", message=f"Saved the note '{note_title}' with the note ID '{note_id}'.")
+        new_component.default.message_box(message_box_type="info", message=f"Saved the note '{note_data['title']}' with the note ID '{note_data['id']}'.")
 
     def delete_note(self, component):
         new_component = Components(self.screen_manager, self.frame_manager)
@@ -433,6 +428,19 @@ class ComponentCommandHandler:
 
         self.screen_manager.show_screen("notes")
         #new_component.default.message_box(message_box_type="info", message=f"Deleted the note '{note_info['title']}' with the note ID '{note_id}'.")
+    
+    def go_to_notes_selection(self, component):
+        new_component = Components(self.screen_manager, self.frame_manager)
+        notes = Notes()
+        result = None
+
+        # Only shows confirmation prompt if any changes have been made
+        note_data = notes.get_note_data_from_components(component, self.frame_manager)
+        
+        result = new_component.default.message_box(message_box_type="confirm", message=f"You have unsaved changes. Are you sure you want to exit this note?")
+
+        if result == True:
+            self.screen_manager.show_screen("notes")
 
     def view_note(self, component):
         # Gets the note ID from the component ID
