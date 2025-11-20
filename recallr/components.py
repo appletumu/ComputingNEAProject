@@ -300,7 +300,7 @@ class CustomComponents:
 
         component.default.button(text="Sign out", button_type="red", **kwargs)
 
-    def page_blurting_selection_button(self, text, page, button_state, selected_notes, **kwargs):
+    def change_page_blurting_button(self, text, page, button_state, selected_notes, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
         
         component.default.button(
@@ -421,19 +421,13 @@ class ComponentCommandHandler:
         self.screen_manager.show_screen("notes", view_note_id=note_id)
     
     def change_page_blurting_selection(self, component):
+        notes_selected = Notes().select_notes_blurt(self.frame_manager)
+
         page_number = component.component_id.split("_")[-1]
-        self.screen_manager.show_screen("blurting_menu_selection", page_number=page_number)
+        self.screen_manager.show_screen("blurting_menu_selection", page_number=page_number, notes_selected=notes_selected)
     
     def select_blurting_notes(self, component):
-        notes_selected = []
-        for frame_component in self.frame_manager.components:
-            if isinstance(frame_component, tk.CTkCheckBox) == False:
-                continue
-            
-            # Checks if the CheckBox is checked, if so adds it to the list
-            if frame_component.get():
-                note_id = frame_component.component_id.split("_")[-1]
-                notes_selected.append(note_id)
+        notes_selected = Notes().select_notes_blurt(self.frame_manager)
         
         new_component = Components(self.screen_manager, self.frame_manager)
 

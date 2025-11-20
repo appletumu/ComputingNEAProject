@@ -1,6 +1,7 @@
 import sqlite3
 from recallr.backend import JsonManager, DatabaseManager
 import re
+import customtkinter as tk
 
 class AppSettings:
     def __init__(self):
@@ -177,3 +178,16 @@ class Notes:
         if len(s) > max_chars:
             return s[:max_chars].rstrip() + '...'
         return s
+    
+    def select_notes_blurt(self, frame_manager):
+        notes_selected = []
+        for frame_component in frame_manager.components:
+            if isinstance(frame_component, tk.CTkCheckBox) == False:
+                continue
+            
+            # Checks if the CheckBox is checked, if so adds it to the list
+            if frame_component.get():
+                note_id = frame_component.component_id.split("_")[-1]
+                notes_selected.append(note_id)
+        
+        return notes_selected
