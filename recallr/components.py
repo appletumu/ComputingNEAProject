@@ -432,12 +432,19 @@ class ComponentCommandHandler:
     def go_to_notes_selection(self, component):
         new_component = Components(self.screen_manager, self.frame_manager)
         notes = Notes()
-        result = None
+        result = True
 
         # Only shows confirmation prompt if any changes have been made
-        note_data = notes.get_note_data_from_components(component, self.frame_manager)
+        current_note_data = notes.get_note_data_from_components(component, self.frame_manager)
+        current_note_title = current_note_data['title']
+        current_note_content = current_note_data['content']
+
+        db_note = Notes().get_notes(note_ids=[int(current_note_data['id'])])[0]
+        db_note_title = db_note['title']
+        db_note_content = db_note['content']
         
-        result = new_component.default.message_box(message_box_type="confirm", message=f"You have unsaved changes. Are you sure you want to exit this note?")
+        if current_note_title != db_note_title or current_note_content != db_note_content:
+            result = new_component.default.message_box(message_box_type="confirm", message=f"You have unsaved changes. Are you sure you want to exit this note?")
 
         if result == True:
             self.screen_manager.show_screen("notes")
