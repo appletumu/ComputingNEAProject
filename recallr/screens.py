@@ -225,5 +225,7 @@ class Screens:
             selected_notes=self.screen_manager.selected_notes
         )
 
+        #main.default.button(text="Select all", component_id="e", button_type="grey")
+        #main.default.button(text="Deselect all", component_id="e", button_type="grey")
         main.default.button(text="Select notes", component_id="select_blurting_notes", button_type="primary", button_style="green")
         main.custom.main_menu_button()  
