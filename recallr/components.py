@@ -1,5 +1,6 @@
 import customtkinter as tk
 import tkinter.messagebox as messagebox
+from tkinter.messagebox import askyesno, askokcancel, askyesnocancel, askretrycancel
 from recallr.backend import DatabaseManager
 from recallr.objects import Account, AppSettings, Notes
 
@@ -211,14 +212,22 @@ class DefaultComponents:
         if title == None:
             title = self.app_settings.app_name
 
+        result = None
+
         if message_box_type == "info":
-            messagebox.showinfo("Recallr", message)
+            messagebox.showinfo(f"{title}", message)
         elif message_box_type == "warning":
-            messagebox.showwarning("Recallr - Warning", message)
+            messagebox.showwarning(f"{title} - Warning", message)
         elif message_box_type == "error":
-            messagebox.showerror("Recallr - Error", message)
+            messagebox.showerror(f"{title} - Error", message)
+        elif message_box_type == "confirm":
+            if message == "":
+                message = "Are you sure you want to do this?"
+            result = askokcancel(f"{title} - Confirm", message)
         else:
-            raise ValueError(f"Unknown message_box_type '{message_box_type}'. Available types: ['info', 'warning', 'error']")
+            raise ValueError(f"Unknown message_box_type '{message_box_type}'. Available types: ['info', 'warning', 'error', 'confirm']")
+
+        return result
 
 
 class CustomComponents:
@@ -441,3 +450,10 @@ class ComponentCommandHandler:
             self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes)
         else:
             new_component.default.message_box(message_box_type="warning", message=f"You need to select at least one note to blurt.")
+    
+    def go_back_to_blurting_selection(self, component):
+        new_component = Components(self.screen_manager, self.frame_manager)
+        result = new_component.default.message_box(message_box_type="confirm")
+
+        if result == True:
+            self.screen_manager.show_screen("blurting_menu_selection")

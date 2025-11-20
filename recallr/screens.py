@@ -251,4 +251,4 @@ class Screens:
         # Prevents the user from editing the textbox
         textbox.configure(state=tk.DISABLED)
 
-        main.custom.main_menu_button()
+        main.default.button(text="Exit", component_id="go_back_to_blurting_selection", button_type="red")
