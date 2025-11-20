@@ -242,7 +242,6 @@ class Screens:
         main.default.content(text=f"Current note: {note['id']}")
 
         # Textbox Content
-        main.default.content(text=note['content'])
         textbox = main.default.text_box(component_id="blurting_content_textbox")
 
         # Inserts the note content into the text box

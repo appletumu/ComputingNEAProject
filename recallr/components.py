@@ -419,14 +419,20 @@ class ComponentCommandHandler:
         new_component.default.message_box(message_box_type="info", message=f"Saved the note '{note_title}' with the note ID '{note_id}'.")
 
     def delete_note(self, component):
+        new_component = Components(self.screen_manager, self.frame_manager)
+
         # Gets the note ID from the component ID
         note_id = component.component_id.split("_")[-1]
-
         note_info = Notes().delete_note(note_id)
 
+        # Confirmation
+        result = new_component.default.message_box(message_box_type="confirm", message=f"Are you sure you want to delete this note?\n\nTitle: '{note_info['title']}'\nID: {note_id}")
+
+        if result == False:
+            return False
+
         self.screen_manager.show_screen("notes")
-        new_component = Components(self.screen_manager, self.frame_manager)
-        new_component.default.message_box(message_box_type="info", message=f"Deleted the note '{note_info['title']}' with the note ID '{note_id}'.")
+        #new_component.default.message_box(message_box_type="info", message=f"Deleted the note '{note_info['title']}' with the note ID '{note_id}'.")
 
     def view_note(self, component):
         # Gets the note ID from the component ID
