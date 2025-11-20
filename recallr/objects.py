@@ -179,15 +179,32 @@ class Notes:
             return s[:max_chars].rstrip() + '...'
         return s
     
-    def select_notes_blurt(self, frame_manager):
+    def select_notes_blurt(self, frame_manager, previous_selected_notes):
         notes_selected = []
+        notes_not_selected = []
         for frame_component in frame_manager.components:
             if isinstance(frame_component, tk.CTkCheckBox) == False:
                 continue
+
+            # Skips the checkbox if it is disabled
+            if frame_component.cget("state") == tk.DISABLED:
+                continue
             
             # Checks if the CheckBox is checked, if so adds it to the list
+            note_id = int(frame_component.component_id.split("_")[-1])
             if frame_component.get():
-                note_id = frame_component.component_id.split("_")[-1]
                 notes_selected.append(note_id)
+            else:
+                notes_not_selected.append(note_id)
+
+        # Combines notes_selected with previous_selected_notes (without having duplicates)
+        for note_id in notes_selected:
+            if note_id not in previous_selected_notes:
+                previous_selected_notes.append(note_id)
         
-        return notes_selected
+        # Removes any unselected ntoes
+        for note_id in notes_not_selected:
+            if note_id in previous_selected_notes:
+                previous_selected_notes.remove(note_id)
+        
+        return previous_selected_notes

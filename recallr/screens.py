@@ -162,7 +162,12 @@ class Screens:
 
     @setup_screen(screen_type="menu")
     def blurting_menu_selection(self, page_number=1, **kwargs):
-        self.screen_manager.selected_notes
+        # Checks to see if selected_notes is an attribute, if not then its likely this screen has only just been loaded
+        try:
+            self.screen_manager.selected_notes
+        except AttributeError:
+            self.screen_manager.selected_notes = []
+
         main = self.screen_manager.create_frame()
         main.default.title(text="Blurting")
         main.default.content(text="Please which notes you would like to blurt today!")
@@ -183,9 +188,14 @@ class Screens:
         for item in page:
             title = item['title']
             title_preview = Notes().make_preview(title, max_chars=50)
-            note_id = item['id']
+            note_id = int(item['id'])
+
+            # Checks if the note has already been selected
+            selected = False
+            if note_id in self.screen_manager.selected_notes:
+                selected = True
             
-            main.default.check_box(text=title_preview, component_id = f"note_{item['id']}",padding=False)
+            main.default.check_box(text=title_preview, component_id = f"note_{item['id']}",padding=False, selected=selected)
         # Adds placeholders if there were less items than in the max 'items_per_page'
         remaining = max(0, min(items_per_page, items_per_page - len(page)))
         for i in range(remaining):
@@ -206,13 +216,13 @@ class Screens:
             text="Next page",
             page=page.next_page,
             button_state=next_button_state,
-            selected_notes=selected_notes
+            selected_notes=self.screen_manager.selected_notes
         )
         main.custom.change_page_blurting_button(
             text="Previous page",
             page=page.previous_page,
             button_state=previous_button_state,
-            selected_notes=selected_notes
+            selected_notes=self.screen_manager.selected_notes
         )
 
         main.default.button(text="Select notes", component_id="select_blurting_notes", button_type="primary", button_style="green")
