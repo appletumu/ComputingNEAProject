@@ -127,7 +127,7 @@ class DefaultComponents:
         if text_size == self.title_size:
             wrap = "none"
         
-        self.frame_manager.create_component(
+        text_box = self.frame_manager.create_component(
             tk.CTkTextbox, 
             component_id=component_id, 
             font=(self.font, text_size), 
@@ -135,6 +135,8 @@ class DefaultComponents:
             wrap=wrap,
             **kwargs
         )
+
+        return text_box
 
     def button(self, text="Button", button_type="default", button_style=None, component_id=None, padding=True, command=None, **kwargs):
         component_size = self.app_settings.component_configs["button"]
@@ -435,6 +437,7 @@ class ComponentCommandHandler:
         new_component = Components(self.screen_manager, self.frame_manager)
 
         if len(self.screen_manager.selected_notes) > 0:
-            new_component.default.message_box(message_box_type="info", message=f"Selected the following notes:\n\n{self.screen_manager.selected_notes}")
+            #new_component.default.message_box(message_box_type="info", message=f"Selected the following notes:\n\n{self.screen_manager.selected_notes}")
+            self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes)
         else:
             new_component.default.message_box(message_box_type="warning", message=f"You need to select at least one note to blurt.")

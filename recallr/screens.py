@@ -225,5 +225,30 @@ class Screens:
             selected_notes=self.screen_manager.selected_notes
         )
 
-        main.default.button(text="Select notes", component_id="select_blurting_notes", button_type="primary", button_style="green")
-        main.custom.main_menu_button()  
+        main.default.button(text="Start blurting!", component_id="select_blurting_notes", button_type="primary", button_style="green")
+        main.custom.main_menu_button() 
+    
+    def blurting_game(self, blurting_notes=[], **kwargs):
+        main = self.screen_manager.create_frame()
+
+        notes_obj = Notes()
+
+        note = notes_obj.get_notes(note_ids=[blurting_notes[0]])[0]
+
+        title = notes_obj.make_preview(note['title'], max_chars=30)
+
+        main.default.title(f"Blurt: {title}")
+        main.default.content(text=f"All notes: {blurting_notes}")
+        main.default.content(text=f"Current note: {note['id']}")
+
+        # Textbox Content
+        main.default.content(text=note['content'])
+        textbox = main.default.text_box(component_id="blurting_content_textbox")
+
+        # Inserts the note content into the text box
+        textbox.insert("0.0", note['content'])
+
+        # Prevents the user from editing the textbox
+        textbox.configure(state=tk.DISABLED)
+
+        main.custom.main_menu_button()
