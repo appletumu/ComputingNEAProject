@@ -61,7 +61,7 @@ class ScreenManager(tk.CTkFrame):
         
         frame_manager = FrameManager(self)
 
-        screens = Screens(frame_manager)
+        screens = Screens(self.window_manager, frame_manager)
         # Checking to see if the function is apart of the Screens class
         func = getattr(screens, function_name, None)
         if callable(func):
@@ -79,7 +79,8 @@ class ScreenManager(tk.CTkFrame):
         print(f"🔲 '{function_name}' screen has been loaded.")
 
 class Screens:
-    def __init__(self, frame_manager):
+    def __init__(self, window_manager, frame_manager):
+        self.window_manager = window_manager
         self.screen_manager = frame_manager.master
         self.frame_manager = frame_manager
 
@@ -228,26 +229,34 @@ class Screens:
         main.default.button(text="Start blurting!", component_id="select_blurting_notes", button_type="primary", button_style="green")
         main.custom.main_menu_button() 
     
-    def blurting_game(self, blurting_notes=[], **kwargs):
+    def blurting_game(self, blurting_notes=[], current_note_index=0, step="waiting", **kwargs):
         main = self.screen_manager.create_frame()
-
         notes_obj = Notes()
-
         note = notes_obj.get_notes(note_ids=[blurting_notes[0]])[0]
 
         title = notes_obj.make_preview(note['title'], max_chars=30)
-
         main.default.title(f"Blurt: {title}")
-        main.default.content(text=f"All notes: {blurting_notes}")
-        main.default.content(text=f"Current note: {note['id']}")
+        main.default.content(text=f"Note: {blurting_notes.index(note['id'])+1}/{len(blurting_notes)}")
 
-        # Textbox Content
-        textbox = main.default.text_box(component_id="blurting_content_textbox")
+        # This section changes based on what 'step' you are on
+        # waiting: Waiting to start the next timer
+        # blurting: Countdown timer where you are blurting
+        # finished: Finished blurting the note, ready to go to the next one
 
-        # Inserts the note content into the text box
-        textbox.insert("0.0", note['content'])
-
-        # Prevents the user from editing the textbox
-        textbox.configure(state=tk.DISABLED)
+        if step == "waiting":
+            main.default.content(text="When you are ready, press the green button below to begin!")
+            main.default.button(text="Start timer", component_id="start_blurting_timer", button_type="primary", button_style="green")
+        elif step == "blurting":
+            seconds = 10
+            main.custom.start_countdown(seconds=seconds)
+        elif step == "times_up":
+            main.default.title(text="Time's up!")
+            main.default.content(text="When you are ready, click the green button below to reveal your note.")
+            main.custom.reveal_blurting_note_button()
+        elif step == "reveal_note":
+            textbox = main.default.text_box(component_id="blurting_content_textbox")
+            textbox.insert("0.0", note['content'])
+            textbox.configure(state=tk.DISABLED)
+            main.default.button(text="Next note", component_id="next_blurting_note", button_type="primary")
 
         main.default.button(text="Exit", component_id="go_back_to_blurting_selection", button_type="red")

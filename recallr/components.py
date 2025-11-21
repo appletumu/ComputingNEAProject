@@ -9,6 +9,8 @@ class ComponentManager:
         self.screen_manager = screen_manager
         self.frame_manager = frame_manager
 
+        self.window_manager = screen_manager.window_manager
+
     def button_click(self, button):
         command_handler = ComponentCommandHandler(screen_manager=self.screen_manager, frame_manager=self.frame_manager)
 
@@ -234,6 +236,8 @@ class CustomComponents:
     def __init__(self, screen_manager, frame_manager):
         self.screen_manager = screen_manager
         self.frame_manager = frame_manager
+
+        self.window_manager = screen_manager.window_manager
     
     def view_note_button(self, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
@@ -327,6 +331,55 @@ class CustomComponents:
             state=button_state,
             padding=False
         )
+
+    def reveal_blurting_note_button(self, state=tk.NORMAL, button_style="green", **kwargs):
+        component = Components(self.screen_manager, self.frame_manager)
+        
+        component.default.button(text="Reveal note", component_id="reveal_blurting_note", state=state, button_type="primary", button_style=button_style)
+
+    def start_countdown(self, seconds=10, **kwargs):
+        # Gets the time remaining
+        if not hasattr(self, "time_left"):
+            self.time_left = seconds
+        if self.time_left is None:
+            self.time_left = seconds
+
+        component = self.frame_manager.find_component("countdown_timer")
+
+        # Create the component if missing
+        if component is None:
+            new_component = Components(self.screen_manager, self.frame_manager)
+            new_component.default.title(text=str(self.time_left), component_id="countdown_timer")
+            new_component.default.content(text="seconds remaining")
+            new_component.custom.reveal_blurting_note_button(state=tk.DISABLED, button_style="grey")
+            component = self.frame_manager.find_component("countdown_timer")
+
+        component.configure(text=str(self.time_left))
+
+        # Schedules the next tick if there is time left
+        if self.time_left > 0:
+            self.time_left -= 1
+            self.window_manager.after(1000, lambda: self.start_countdown(self.time_left))
+        else:
+            self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=0, step="times_up")
+            self.time_left = None
+    
+"""    def start_countdown(self, seconds=10, **kwargs):
+        component = self.frame_manager.find_component("countdown_timer")
+
+        if component == None:
+            self.time_left = seconds
+            new_component = Components(self.screen_manager, self.frame_manager)
+            new_component.default.title(text=str(self.time_left), component_id="countdown_timer")
+        elif self.time_left >= 0:
+            component.configure(text=str(self.time_left), component_id="countdown_timer")
+
+            # Schedule the next tick
+            self.window_manager.after(1000, self.start_countdown)
+
+            self.time_left -= 1
+        else:
+            print("timer finished")"""
 
 class ComponentCommandHandler:
     def __init__(self, screen_manager, frame_manager):
@@ -478,3 +531,9 @@ class ComponentCommandHandler:
 
         if result == True:
             self.screen_manager.show_screen("blurting_menu_selection")
+
+    def start_blurting_timer(self, component):
+        self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=0, step="blurting")
+    
+    def reveal_blurting_note(self, component):
+        self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=0, step="reveal_note")
