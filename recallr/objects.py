@@ -12,6 +12,7 @@ class AppSettings:
         self.text_sizes = json_manager.read_json('textSizes')
         self.component_configs = json_manager.read_json("componentConfigs")
         self.colors = json_manager.read_json("colors")
+        self.blurting_recall_time_limit = json_manager.read_json("blurtingRecallNotesTimeLimit")
 
 class Account:
     def __init__(self):

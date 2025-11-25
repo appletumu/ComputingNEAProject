@@ -1,7 +1,7 @@
 import customtkinter as tk
 from recallr.frames import FrameManager, Frames
 from recallr.components import Components
-from recallr.objects import Account, Notes
+from recallr.objects import AppSettings, Account, Notes
 from recallr.backend import DatabaseManager
 from paginate import Page
 
@@ -251,8 +251,9 @@ class Screens:
             main.default.content(text="When you are ready, press the green button below to begin!")
             main.default.button(text="Start timer", component_id="start_blurting_timer", button_type="primary", button_style="green")
         elif step == "blurting":
-            seconds = 3
-            main.custom.start_countdown(seconds=seconds)
+            app_settings = AppSettings()
+            time_limit = app_settings.blurting_recall_time_limit
+            main.custom.start_countdown(seconds=time_limit)
         elif step == "times_up":
             main.default.title(text="Time's up!")
             main.default.content(text="When you are ready, click the green button below to reveal your note.")

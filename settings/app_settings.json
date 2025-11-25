@@ -63,5 +63,6 @@
     "truncateNotePreviewsBy": {
         "noteButtonPreview": 18,
         "blurtingMenuPreview": 30
-    }
+    },
+    "blurtingRecallNotesTimeLimit": 60
 }
