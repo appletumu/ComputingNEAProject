@@ -438,7 +438,7 @@ class ComponentCommandHandler:
 
     def coming_soon(self, component):
         new_component = Components(self.screen_manager, self.frame_manager)
-        new_component.default.message_box(message_box_type="warning", message="Coming Soon") 
+        new_component.default.message_box(message_box_type="warning", message="i have not done this yet") 
 
     def main_menu(self, component):
         self.screen_manager.show_screen("main_menu")
