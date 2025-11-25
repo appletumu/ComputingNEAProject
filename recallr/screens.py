@@ -115,8 +115,19 @@ class Screens:
         main.default.content(text=f"Hello, {account.display_name}!")
         main.default.button(text="Notes")
         main.default.button(text="Test yourself", component_id="quiz_menu")
-        main.default.button(text="Settings", button_type="grey", component_id="coming_soon")
+        main.default.button(text="Settings", button_type="grey", component_id="settings_pane")
         main.custom.sign_out_button()
+
+    @setup_screen(screen_type="menu")
+    def settings(self):
+        account = Account()
+
+        main = self.screen_manager.create_frame()
+        sidebar = self.screen_manager.create_frame("sidebar")
+        main.default.title("Settings Name")
+        main.default.content("Setting value goes here.")
+        main.default.button(text="On", component_id="toggle_setting")
+        main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
     def quiz_menu(self):

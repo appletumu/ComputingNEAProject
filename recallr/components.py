@@ -507,6 +507,9 @@ class ComponentCommandHandler:
         note_id = component.component_id.split("_")[-1]
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
+
+    def settings_pane(self, component):
+        self.screen_manager.show_screen("settings")
     
     def change_page_blurting_selection(self, component):
         self.screen_manager.selected_notes = Notes().select_notes_blurt(self.frame_manager, self.screen_manager.selected_notes)
