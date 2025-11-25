@@ -247,7 +247,7 @@ class Screens:
             main.default.content(text="When you are ready, press the green button below to begin!")
             main.default.button(text="Start timer", component_id="start_blurting_timer", button_type="primary", button_style="green")
         elif step == "blurting":
-            seconds = 10
+            seconds = 3
             main.custom.start_countdown(seconds=seconds)
         elif step == "times_up":
             main.default.title(text="Time's up!")
