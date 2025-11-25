@@ -168,6 +168,10 @@ class Screens:
             self.screen_manager.selected_notes
         except AttributeError:
             self.screen_manager.selected_notes = []
+        try:
+            self.screen_manager.current_note_index
+        except AttributeError:
+            self.screen_manager.current_note_index = 0
 
         main = self.screen_manager.create_frame()
         main.default.title(text="Blurting")
@@ -232,7 +236,7 @@ class Screens:
     def blurting_game(self, blurting_notes=[], current_note_index=0, step="waiting", **kwargs):
         main = self.screen_manager.create_frame()
         notes_obj = Notes()
-        note = notes_obj.get_notes(note_ids=[blurting_notes[0]])[0]
+        note = notes_obj.get_notes(note_ids=[blurting_notes[current_note_index]])[0]
 
         title = notes_obj.make_preview(note['title'], max_chars=30)
         main.default.title(f"Blurt: {title}")
@@ -241,7 +245,7 @@ class Screens:
         # This section changes based on what 'step' you are on
         # waiting: Waiting to start the next timer
         # blurting: Countdown timer where you are blurting
-        # finished: Finished blurting the note, ready to go to the next one
+        # times_up / reveal_note: Finished blurting the note, ready to go to the next one
 
         if step == "waiting":
             main.default.content(text="When you are ready, press the green button below to begin!")
@@ -257,6 +261,11 @@ class Screens:
             textbox = main.default.text_box(component_id="blurting_content_textbox")
             textbox.insert("0.0", note['content'])
             textbox.configure(state=tk.DISABLED)
-            main.default.button(text="Next note", component_id="next_blurting_note", button_type="primary")
+
+            if current_note_index+1 < len(blurting_notes):
+                main.default.button(text="Next note", component_id="next_blurting_note", button_type="primary")
+            else:
+                main.default.button(text="Finish blurting", component_id="go_back_to_blurting_selection_noconfirm", command="go_back_to_blurting_selection", button_type="primary")
+                return
 
         main.default.button(text="Exit", component_id="go_back_to_blurting_selection", button_type="red")
