@@ -105,7 +105,7 @@ class DefaultComponents:
     def entry_field(self, component_id=None, **kwargs):
         component_size = self.app_settings.component_configs["entryField"]
 
-        self.frame_manager.create_component(
+        entry_field_instance = self.frame_manager.create_component(
             tk.CTkEntry, 
             component_id=component_id, 
             font=(self.font, self.content_size), 
@@ -113,6 +113,8 @@ class DefaultComponents:
             height=40, 
             **kwargs
         )
+
+        return entry_field_instance
 
     def text_box(self, component_id=None, textbox_size="content", width=None, height=None, **kwargs):
         text_size = self.app_settings.text_sizes[textbox_size]
@@ -297,18 +299,33 @@ class CustomComponents:
         user_settings = UserSettings()
         setting = user_settings.get_setting(setting_id)
 
+        # Gets settings info
         setting_name = setting['name']
         setting_description = setting['description']
 
         component.default.title(text=setting_name)
         component.default.content(text=setting_description)
 
+        current_setting_value = setting['defaultValue']
+
+        component_style = setting['settingsColour']
+
+        # Creates the setting components
         if setting['settingsType'] == "choices" or setting['settingsType'] == "buttons":
            for option in setting['settingOptions']:
-                component.default.button(text=option, component_id=f"settings_{setting['settingsType']}", button_type="default", command="coming_soon", padding=False)
+                # Disables the button if that choice has been selected
+                if option == current_setting_value:
+                    button_state = "disabled"
+                else:
+                    button_state = "normal"
+                component.default.button(text=option, component_id=f"settings_{setting['settingsType']}", button_type=component_style, command="coming_soon", state=button_state, padding=False)
 
         elif setting['settingsType'].startswith("input"):
-            component.default.entry_field(placeholder_text="Enter value here...", component_id=None)
+            entry_field = component.default.entry_field(placeholder_text="Enter value here...", component_id=None)
+
+            # Inserts the current value of the setting
+            entry_field.insert(0, current_setting_value)
+
             component.default.button(text="Save", component_id="settings_save", button_type="primary", command="coming_soon", padding=False)
 
         component.custom.main_menu_button()

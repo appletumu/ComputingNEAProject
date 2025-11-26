@@ -5,6 +5,7 @@
         "defaultValue": "Medium",
         "confirmationRequired": false,
         "settingsType": "choices",
+        "settingsColour": null,
         "settingOptions": ["Small", "Medium", "Large"]
     },
     "blurtingRecallNotesTimeLimit": {
@@ -12,6 +13,7 @@
         "description": "How long you will have (in seconds) to blurt your note.",
         "defaultValue": 60,
         "confirmationRequired": false,
+        "settingsColour": null,
         "settingsType": "input:int"
     },
     "deleteAccount": {
@@ -20,6 +22,7 @@
         "defaultValue": null,
         "confirmationRequired": true,
         "settingsType": "buttons",
+        "settingsColour": "red",
         "settingOptions": ["Delete"]
     }
 }
