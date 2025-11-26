@@ -1,7 +1,7 @@
 import customtkinter as tk
 from recallr.frames import FrameManager, Frames
 from recallr.components import Components
-from recallr.objects import AppSettings, Account, Notes
+from recallr.objects import UserSettings, AppSettings, Account, Notes
 from recallr.backend import DatabaseManager
 from paginate import Page
 
@@ -119,18 +119,23 @@ class Screens:
         main.custom.sign_out_button()
 
     @setup_screen(screen_type="menu")
-    def settings(self):
-        account = Account()
-
+    def settings(self, **kwargs):
+        user_settings = UserSettings()
         main = self.screen_manager.create_frame()
-        sidebar = self.screen_manager.create_frame("sidebar")
+
         main.default.title("Settings Name")
         main.default.content("Setting value goes here.")
         main.default.button(text="On", component_id="toggle_setting")
         main.custom.main_menu_button()
 
+        sidebar = self.screen_manager.create_frame("sidebar")
+        for setting in user_settings.list:
+            setting_values = next(iter(setting.values()))
+
+            sidebar.custom.sidebar_button(title=setting_values['name'], content=setting_values['description'], command=None, **kwargs)
+
     @setup_screen(screen_type="menu")
-    def quiz_menu(self):
+    def quiz_menu(self, **kwargs):
         main = self.screen_manager.create_frame()
         main.default.title(text="Quiz Menu")
         main.default.content(text="Please pick which mode you would like to do!")

@@ -238,6 +238,30 @@ class CustomComponents:
         self.frame_manager = frame_manager
 
         self.window_manager = screen_manager.window_manager
+
+    def sidebar_button(self, command=None, **kwargs):
+        get_title = kwargs.pop('title')
+        get_content = kwargs.pop('content')
+
+        component = Components(self.screen_manager, self.frame_manager)
+
+        title = get_title or "Untitled"
+        content = get_content or  "No preview available"
+
+        # Collapse newlines and repeated spaces for both title and content
+        title_max = kwargs.pop('title_max_chars', 18)
+        preview_max = kwargs.pop('preview_max_chars', 18)
+
+        def make_preview(text, max_chars):
+            s = ' '.join(str(text).split())
+            if len(s) > max_chars:
+                return s[:max_chars].rstrip() + '...'
+            return s
+
+        title_preview = make_preview(title, title_max)
+        content_preview = make_preview(content, preview_max)
+
+        component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", command=command, **kwargs)
     
     def view_note_button(self, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
@@ -265,7 +289,8 @@ class CustomComponents:
         title_preview = make_preview(note_title, title_max)
         content_preview = make_preview(note_content, preview_max)
 
-        component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", command="view_note", **kwargs)
+        #component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", command="view_note", **kwargs)
+        component.custom.sidebar_button(title=title_preview, content=content_preview, command="view_note", **kwargs)
     
     def view_note_textbox(self, note_id, **kwargs):
         account = Account()
@@ -363,23 +388,6 @@ class CustomComponents:
         else:
             self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="times_up")
             self.time_left = None
-    
-"""    def start_countdown(self, seconds=10, **kwargs):
-        component = self.frame_manager.find_component("countdown_timer")
-
-        if component == None:
-            self.time_left = seconds
-            new_component = Components(self.screen_manager, self.frame_manager)
-            new_component.default.title(text=str(self.time_left), component_id="countdown_timer")
-        elif self.time_left >= 0:
-            component.configure(text=str(self.time_left), component_id="countdown_timer")
-
-            # Schedule the next tick
-            self.window_manager.after(1000, self.start_countdown)
-
-            self.time_left -= 1
-        else:
-            print("timer finished")"""
 
 class ComponentCommandHandler:
     def __init__(self, screen_manager, frame_manager):

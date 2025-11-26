@@ -1,0 +1,25 @@
+{
+    "textSize": {
+        "name": "Text size",
+        "description": "Sets the text size throughout the app.",
+        "defaultValue": "Medium",
+        "confirmationRequired": false,
+        "settingsType": "options",
+        "settingOptions": ["Small", "Medium", "Large", "Extra Large"]
+    },
+    "blurtingRecallNotesTimeLimit": {
+        "name": "Blurting recall timer",
+        "description": "How long you will have (in seconds) to blurt your note.",
+        "defaultValue": 60,
+        "confirmationRequired": false,
+        "settingsType": "input:int"
+    },
+    "deleteAccount": {
+        "name": "Delete account",
+        "description": "Deletes your account. Once done, this action cannot be done.",
+        "defaultValue": null,
+        "confirmationRequired": true,
+        "settingsType": "button",
+        "settingOptions": ["Delete"]
+    }
+}

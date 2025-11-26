@@ -14,6 +14,13 @@ class AppSettings:
         self.colors = json_manager.read_json("colors")
         self.blurting_recall_time_limit = json_manager.read_json("blurtingRecallNotesTimeLimit")
 
+class UserSettings:
+    def __init__(self):
+        json_manager = JsonManager("settings/user_settings.json")
+
+        self.data = json_manager.read_file()  # returns a dict
+        self.list = [{k: v} for k, v in self.data.items()]
+
 class Account:
     def __init__(self):
         json_manager = JsonManager("settings/app_settings.json")
