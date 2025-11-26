@@ -21,6 +21,12 @@ class UserSettings:
         self.data = json_manager.read_file()  # returns a dict
         self.list = [{k: v} for k, v in self.data.items()]
 
+    def get_setting(self, setting_id):
+        for setting in self.list:
+            if setting_id in setting:
+                return setting[setting_id]
+        return None
+
 class Account:
     def __init__(self):
         json_manager = JsonManager("settings/app_settings.json")

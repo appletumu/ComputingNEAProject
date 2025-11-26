@@ -2,7 +2,7 @@ import customtkinter as tk
 import tkinter.messagebox as messagebox
 from tkinter.messagebox import askyesno, askokcancel, askyesnocancel, askretrycancel
 from recallr.backend import DatabaseManager
-from recallr.objects import Account, AppSettings, Notes
+from recallr.objects import Account, UserSettings, AppSettings, Notes
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):
@@ -292,6 +292,28 @@ class CustomComponents:
         #component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", command="view_note", **kwargs)
         component.custom.sidebar_button(title=title_preview, content=content_preview, command="view_note", **kwargs)
     
+    def view_setting_properties(self, setting_id, **kwargs):
+        component = Components(self.screen_manager, self.frame_manager)
+
+        user_settings = UserSettings()
+        setting = user_settings.get_setting(setting_id)
+
+        setting_name = setting['name']
+        setting_description = setting['description']
+
+        component.default.title(text=setting_name)
+        component.default.content(text=setting_description)
+
+        if setting['settingsType'] == "choices" or setting['settingsType'] == "buttons":
+           for option in setting['settingOptions']:
+                component.default.button(text=option, component_id=None, button_type="default", command="coming_soon", padding=False)
+
+        elif setting['settingsType'].startswith("input"):
+            component.default.entry_field(placeholder_text="Enter value here...", component_id=None)
+
+        component.custom.main_menu_button()
+
+
     def view_note_textbox(self, note_id, **kwargs):
         account = Account()
         component = Components(self.screen_manager, self.frame_manager)
@@ -515,6 +537,12 @@ class ComponentCommandHandler:
         note_id = component.component_id.split("_")[-1]
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
+
+    def view_setting(self, component):
+        # Gets the setting ID from the component ID
+        setting_id = component.component_id.split("_")[-1]
+
+        self.screen_manager.show_screen("settings", view_setting_id=setting_id)
 
     def settings_pane(self, component):
         self.screen_manager.show_screen("settings")

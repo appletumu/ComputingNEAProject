@@ -119,20 +119,27 @@ class Screens:
         main.custom.sign_out_button()
 
     @setup_screen(screen_type="menu")
-    def settings(self, **kwargs):
+    def settings(self, view_setting_id=None, **kwargs):
         user_settings = UserSettings()
         main = self.screen_manager.create_frame()
 
-        main.default.title("Settings Name")
-        main.default.content("Setting value goes here.")
-        main.default.button(text="On", component_id="toggle_setting")
-        main.custom.main_menu_button()
+        # Checks if a setting is being viewed
+        if view_setting_id == None:
+            main.default.title()
+            main.default.content(text="Select a setting from the sidebar!")
+            main.custom.main_menu_button()
+            main.custom.sign_out_button()
+
+        else:
+            setting_id = view_setting_id
+            main.custom.view_setting_properties(setting_id=setting_id)
 
         sidebar = self.screen_manager.create_frame("sidebar")
         for setting in user_settings.list:
             setting_values = next(iter(setting.values()))
-
-            sidebar.custom.sidebar_button(title=setting_values['name'], content=setting_values['description'], command=None, **kwargs)
+            setting_id = next(iter(setting.keys()))
+            
+            sidebar.custom.sidebar_button(component_id=f"setting_{setting_id}", title=setting_values['name'], content=setting_values['description'], command="view_setting", **kwargs)
 
     @setup_screen(screen_type="menu")
     def quiz_menu(self, **kwargs):
