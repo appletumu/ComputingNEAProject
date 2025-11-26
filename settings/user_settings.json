@@ -5,7 +5,7 @@
         "defaultValue": "Medium",
         "confirmationRequired": false,
         "settingsType": "choices",
-        "settingOptions": ["Small", "Medium", "Large", "Extra Large"]
+        "settingOptions": ["Small", "Medium", "Large"]
     },
     "blurtingRecallNotesTimeLimit": {
         "name": "Blurting timer",

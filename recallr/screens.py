@@ -134,12 +134,20 @@ class Screens:
             setting_id = view_setting_id
             main.custom.view_setting_properties(setting_id=setting_id)
 
+        # Checks if a setting is being viewed
+        selected_setting_id = view_setting_id
+
         sidebar = self.screen_manager.create_frame("sidebar")
         for setting in user_settings.list:
             setting_values = next(iter(setting.values()))
             setting_id = next(iter(setting.keys()))
-            
-            sidebar.custom.sidebar_button(component_id=f"setting_{setting_id}", title=setting_values['name'], content=setting_values['description'], command="view_setting", **kwargs)
+
+            # If the button is selected, then it greys it out
+            button_state = "normal"
+            if setting_id == selected_setting_id:
+                button_state = "disabled"
+
+            sidebar.custom.sidebar_button(component_id=f"setting_{setting_id}", title=setting_values['name'], content=setting_values['description'], command="view_setting", state=button_state, **kwargs)
 
     @setup_screen(screen_type="menu")
     def quiz_menu(self, **kwargs):

@@ -289,7 +289,6 @@ class CustomComponents:
         title_preview = make_preview(note_title, title_max)
         content_preview = make_preview(note_content, preview_max)
 
-        #component.default.button(text=f"{title_preview}\n{content_preview}", padding=False, button_type="grey", command="view_note", **kwargs)
         component.custom.sidebar_button(title=title_preview, content=content_preview, command="view_note", **kwargs)
     
     def view_setting_properties(self, setting_id, **kwargs):
@@ -306,10 +305,11 @@ class CustomComponents:
 
         if setting['settingsType'] == "choices" or setting['settingsType'] == "buttons":
            for option in setting['settingOptions']:
-                component.default.button(text=option, component_id=None, button_type="default", command="coming_soon", padding=False)
+                component.default.button(text=option, component_id=f"settings_{setting['settingsType']}", button_type="default", command="coming_soon", padding=False)
 
         elif setting['settingsType'].startswith("input"):
             component.default.entry_field(placeholder_text="Enter value here...", component_id=None)
+            component.default.button(text="Save", component_id="settings_save", button_type="primary", command="coming_soon", padding=False)
 
         component.custom.main_menu_button()
 
