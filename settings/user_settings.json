@@ -18,7 +18,7 @@
     },
     "deleteAccount": {
         "name": "Delete account",
-        "description": "Deletes your account. Once done, this action cannot be done.",
+        "description": "Deletes your account. Once deleted, this action cannot be undone.",
         "defaultValue": null,
         "confirmationRequired": true,
         "settingsType": "buttons",

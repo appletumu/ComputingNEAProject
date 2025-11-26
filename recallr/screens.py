@@ -128,7 +128,6 @@ class Screens:
             main.default.title()
             main.default.content(text="Select a setting from the sidebar!")
             main.custom.main_menu_button()
-            main.custom.sign_out_button()
 
         else:
             setting_id = view_setting_id

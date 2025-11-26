@@ -308,7 +308,10 @@ class CustomComponents:
 
         current_setting_value = setting['defaultValue']
 
-        component_style = setting['settingsColour']
+        if setting['settingsColour'] != None:
+            component_style = setting['settingsColour']
+        else:
+            component_style = "default"
 
         # Creates the setting components
         if setting['settingsType'] == "choices" or setting['settingsType'] == "buttons":
