@@ -320,6 +320,8 @@ class CustomComponents:
         else:
             component_style = "default"
 
+        component_id_format = component_id=f"settings_{setting_id}_{setting['settingsType']}"
+
         # Creates the setting components
         if setting['settingsType'] == "choices" or setting['settingsType'] == "buttons":
            for option in setting['settingOptions']:
@@ -328,15 +330,16 @@ class CustomComponents:
                     button_state = "disabled"
                 else:
                     button_state = "normal"
-                component.default.button(text=option, component_id=f"settings_{setting_id}_{setting['settingsType']}_{option}", button_type=component_style, command="change_setting_value", state=button_state, padding=False)
+                component.default.button(text=option, component_id=f"{component_id_format}_{option}", button_type=component_style, command="change_setting_value", state=button_state, padding=False)
 
         elif setting['settingsType'].startswith("input"):
-            entry_field = component.default.entry_field(placeholder_text="Enter value here...", component_id=None)
+            value = current_setting_value
+            entry_field = component.default.entry_field(placeholder_text="Enter value here...", component_id=f"{setting_id}_entry_field")
 
             # Inserts the current value of the setting
             entry_field.insert(0, current_setting_value)
 
-            component.default.button(text="Save", component_id="settings_save", button_type="primary", command="coming_soon", padding=False)
+            component.default.button(text="Save", component_id=f"{component_id_format}_{value}", button_type="primary", command="change_setting_value", padding=False)
 
         component.custom.main_menu_button()
 
@@ -514,16 +517,37 @@ class ComponentCommandHandler:
         user_settings = UserSettings()
 
         # Gets the setting ID from the component ID
-        choice = component.component_id.split("_")[-1]
         settings_type = component.component_id.split("_")[-2]
         setting_id = component.component_id.split("_")[-3]
 
-        # If the settings type is not buttons, changes the setting value
-        if settings_type != "buttons":
-            user_settings.change_setting(setting_id, choice)
-            self.screen_manager.show_screen("settings", view_setting_id=setting_id)
+        # Gets the new value
+        if settings_type == "choices":
+            new_value = component.component_id.split("_")[-1]
+        elif settings_type.startswith("input"):
+            # Input validation
+            type_name = s.split(':')[-1]
+            type_map = {
+                'int': int,
+                'float': float,
+                'str': str
+            }
+            x = 42
+
+            if isinstance(x, actual_type):
+                print("x is of the correct type!")
+            else:
+                print("x is the wrong type.")
+
+            # Gets the input if it is valid
+            new_value = self.frame_manager.find_component(f"{setting_id}_entry_field").get()
         else:
-            new_component.default.message_box(message_box_type="info", message=f"Not changed")
+            new_component.default.message_box(message_box_type="warning", message=f"This value cannot be changed the setting type '{settings_type}' is not supported yet.")
+            return False
+
+        # changes the setting value
+        user_settings.change_setting(setting_id, new_value)
+        self.screen_manager.show_screen("settings", view_setting_id=setting_id)
+        new_component.default.message_box(message_box_type="info", message=f"Sucessfully changed the setting '{settings_type}' to '{new_value}'.")
 
     def view_setting(self, component):
         # Gets the setting ID from the component ID
