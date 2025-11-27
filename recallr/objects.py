@@ -18,6 +18,8 @@ class UserSettings:
     def __init__(self):
         json_manager = JsonManager("settings/user_settings.json")
 
+        self.db_manager = DatabaseManager()
+
         self.data = json_manager.read_file()  # returns a dict
         self.list = [{k: v} for k, v in self.data.items()]
 
@@ -26,6 +28,27 @@ class UserSettings:
             if setting_id in setting:
                 return setting[setting_id]
         return None
+    
+    def change_setting(self, setting_id, new_value):
+        account = Account()
+        # Either inserts a new setting or updates an existing one
+        try:
+            self.db_manager.query(
+                """
+                INSERT INTO user_settings (owner_username, setting_id, settings_value)
+                VALUES (?, ?, ?)
+                """,
+                (account.username, setting_id, new_value)
+            )
+        except sqlite3.IntegrityError:
+            # If the setting already exists, update it instead
+            self.db_manager.query("""
+                UPDATE user_settings 
+                SET settings_value = ?
+                WHERE owner_username = ? AND setting_id = ?
+                """,
+                (new_value, account.username, setting_id)
+            )
 
 class Account:
     def __init__(self):

@@ -321,7 +321,7 @@ class CustomComponents:
                     button_state = "disabled"
                 else:
                     button_state = "normal"
-                component.default.button(text=option, component_id=f"settings_{setting['settingsType']}", button_type=component_style, command="coming_soon", state=button_state, padding=False)
+                component.default.button(text=option, component_id=f"settings_{setting_id}_{setting['settingsType']}_{option}", button_type=component_style, command="change_setting_value", state=button_state, padding=False)
 
         elif setting['settingsType'].startswith("input"):
             entry_field = component.default.entry_field(placeholder_text="Enter value here...", component_id=None)
@@ -501,6 +501,30 @@ class ComponentCommandHandler:
 
     def blurting(self, component):
         self.screen_manager.show_screen("blurting_menu_selection")
+
+    def change_setting_value(self, component):
+        new_component = Components(self.screen_manager, self.frame_manager)
+        user_settings = UserSettings()
+
+        # Gets the setting ID from the component ID
+        choice = component.component_id.split("_")[-1]
+        settings_type = component.component_id.split("_")[-2]
+        setting_id = component.component_id.split("_")[-3]
+
+        if settings_type != "buttons":
+            user_settings.change_setting(setting_id, choice)
+            new_component.default.message_box(message_box_type="info", message=f"Choice: {choice}\nSetting ID: {setting_id}")
+        else:
+            new_component.default.message_box(message_box_type="info", message=f"Not changed")
+
+    def view_setting(self, component):
+        # Gets the setting ID from the component ID
+        setting_id = component.component_id.split("_")[-1]
+
+        self.screen_manager.show_screen("settings", view_setting_id=setting_id)
+
+    def settings_pane(self, component):
+        self.screen_manager.show_screen("settings")
     
     def create_note(self, component):
         note_id = Notes().create_note()
@@ -557,15 +581,6 @@ class ComponentCommandHandler:
         note_id = component.component_id.split("_")[-1]
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
-
-    def view_setting(self, component):
-        # Gets the setting ID from the component ID
-        setting_id = component.component_id.split("_")[-1]
-
-        self.screen_manager.show_screen("settings", view_setting_id=setting_id)
-
-    def settings_pane(self, component):
-        self.screen_manager.show_screen("settings")
     
     def change_page_blurting_selection(self, component):
         self.screen_manager.selected_notes = Notes().select_notes_blurt(self.frame_manager, self.screen_manager.selected_notes)

@@ -28,6 +28,15 @@ class DatabaseManager:
             )
             """)
 
+            self.cursor.execute("""
+            CREATE TABLE IF NOT EXISTS user_settings (  
+                owner_username TEXT,
+                setting_id TEXT UNIQUE,
+                settings_value TEXT,
+                FOREIGN KEY (owner_username) REFERENCES accounts(username)
+            )
+            """)
+
             self.connection.commit()
         except sqlite3.Error as e:
             raise e
