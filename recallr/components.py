@@ -524,22 +524,27 @@ class ComponentCommandHandler:
         if settings_type == "choices":
             new_value = component.component_id.split("_")[-1]
         elif settings_type.startswith("input"):
+            # Gets input
+            new_value = self.frame_manager.find_component(f"{setting_id}_entry_field").get()
+
             # Input validation
-            type_name = s.split(':')[-1]
+            type_name = settings_type.split(':')[-1]
             type_map = {
                 'int': int,
                 'float': float,
                 'str': str
             }
-            x = 42
+            actual_type = type_map[type_name]
 
-            if isinstance(x, actual_type):
-                print("x is of the correct type!")
-            else:
-                print("x is the wrong type.")
+            # Attempts to change the type to whatever the actual type is
+            try:
+                new_value = actual_type(new_value)
+            except ValueError:
+                pass
 
-            # Gets the input if it is valid
-            new_value = self.frame_manager.find_component(f"{setting_id}_entry_field").get()
+            if isinstance(new_value, actual_type) == False:
+                new_component.default.message_box(message_box_type="warning", message=f"'{new_value}' is an invalid input. Your input must be a {type_name}.")
+                return
         else:
             new_component.default.message_box(message_box_type="warning", message=f"This value cannot be changed the setting type '{settings_type}' is not supported yet.")
             return False
