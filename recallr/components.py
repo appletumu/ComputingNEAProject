@@ -297,7 +297,7 @@ class CustomComponents:
         component = Components(self.screen_manager, self.frame_manager)
 
         user_settings = UserSettings()
-        setting = user_settings.get_setting(setting_id)
+        setting = user_settings.get_setting_data(setting_id)
 
         # Gets settings info
         setting_name = setting['name']
@@ -306,7 +306,14 @@ class CustomComponents:
         component.default.title(text=setting_name)
         component.default.content(text=setting_description)
 
-        current_setting_value = setting['defaultValue']
+        # Gets current setting value from database
+        db_setting_value = user_settings.get_user_setting_value(setting_id)
+        print(db_setting_value)
+        if db_setting_value != None:
+            current_setting_value = db_setting_value
+        else:
+            # Sets to default value if no value is found
+            current_setting_value = setting['defaultValue']
 
         if setting['settingsColour'] != None:
             component_style = setting['settingsColour']
@@ -511,9 +518,10 @@ class ComponentCommandHandler:
         settings_type = component.component_id.split("_")[-2]
         setting_id = component.component_id.split("_")[-3]
 
+        # If the settings type is not buttons, changes the setting value
         if settings_type != "buttons":
             user_settings.change_setting(setting_id, choice)
-            new_component.default.message_box(message_box_type="info", message=f"Choice: {choice}\nSetting ID: {setting_id}")
+            self.screen_manager.show_screen("settings", view_setting_id=setting_id)
         else:
             new_component.default.message_box(message_box_type="info", message=f"Not changed")
 

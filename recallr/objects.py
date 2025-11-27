@@ -23,7 +23,17 @@ class UserSettings:
         self.data = json_manager.read_file()  # returns a dict
         self.list = [{k: v} for k, v in self.data.items()]
 
-    def get_setting(self, setting_id):
+    def get_user_setting_value(self, setting_id):
+        account = Account()
+        result = self.db_manager.query(
+            "SELECT settings_value FROM user_settings WHERE owner_username = ? AND setting_id = ?",
+            (account.username, setting_id)
+        )
+        if result:
+            return result[0][0]
+        return None
+
+    def get_setting_data(self, setting_id):
         for setting in self.list:
             if setting_id in setting:
                 return setting[setting_id]
