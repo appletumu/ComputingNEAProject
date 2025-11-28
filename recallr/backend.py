@@ -31,10 +31,11 @@ class DatabaseManager:
             self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS user_settings (  
                 owner_username TEXT,
-                setting_id TEXT UNIQUE,
+                setting_id TEXT,
                 settings_value TEXT,
-                FOREIGN KEY (owner_username) REFERENCES accounts(username)
-            )
+                FOREIGN KEY (owner_username) REFERENCES accounts(username),
+                UNIQUE(owner_username, setting_id)
+            );
             """)
 
             self.connection.commit()
