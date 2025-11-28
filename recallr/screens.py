@@ -127,7 +127,6 @@ class Screens:
         if view_setting_id == None:
             main.default.title()
             main.default.content(text="Select a setting from the sidebar!")
-            main.custom.main_menu_button()
 
         else:
             setting_id = view_setting_id
@@ -146,7 +145,13 @@ class Screens:
             if setting_id == selected_setting_id:
                 button_state = "disabled"
 
-            sidebar.custom.sidebar_button(component_id=f"setting_{setting_id}", title=setting_values['name'], content=setting_values['description'], command="view_setting", state=button_state, **kwargs)
+            if setting_values['settingsType'] != "buttons":
+                content_preview = f"'{user_settings.get_current_setting_value(setting_id)}'"
+            else:
+                content_preview = setting_values["description"]
+
+            sidebar.custom.sidebar_button(component_id=f"setting_{setting_id}", title=setting_values['name'], content=content_preview, command="view_setting", state=button_state, **kwargs)
+        sidebar.custom.main_menu_button(button_type="default")
 
     @setup_screen(screen_type="menu")
     def quiz_menu(self, **kwargs):

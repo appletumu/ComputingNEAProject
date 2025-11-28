@@ -248,7 +248,7 @@ class CustomComponents:
         component = Components(self.screen_manager, self.frame_manager)
 
         title = get_title or "Untitled"
-        content = get_content or  "No preview available"
+        content = get_content or  "No preview"
 
         # Collapse newlines and repeated spaces for both title and content
         title_max = kwargs.pop('title_max_chars', 18)
@@ -276,7 +276,7 @@ class CustomComponents:
         note_content = note['content']
 
         note_title = note['title'] or "Untitled"
-        note_content = note['content'] or  "No preview available"
+        note_content = note['content'] or  "No preview"
 
         # Collapse newlines and repeated spaces for both title and content
         title_max = kwargs.pop('title_max_chars', 18)
@@ -306,14 +306,8 @@ class CustomComponents:
         component.default.title(text=setting_name)
         component.default.content(text=setting_description)
 
-        # Gets current setting value from database
-        db_setting_value = user_settings.get_user_setting_value(setting_id)
-        print(db_setting_value)
-        if db_setting_value != None:
-            current_setting_value = db_setting_value
-        else:
-            # Sets to default value if no value is found
-            current_setting_value = setting['defaultValue']
+        # Gets current setting value either from database, or if not then default JSON value
+        current_setting_value = user_settings.get_current_setting_value(setting_id)
 
         if setting['settingsColour'] != None:
             component_style = setting['settingsColour']
@@ -330,7 +324,17 @@ class CustomComponents:
                     button_state = "disabled"
                 else:
                     button_state = "normal"
-                component.default.button(text=option, component_id=f"{component_id_format}_{option}", button_type=component_style, command="change_setting_value", state=button_state, padding=False)
+
+                # Change the command if the type is buttons and there is a specific command
+                if setting['settingsType'] == "buttons":
+                    text = option['name']
+                    command = option['command']
+                    button_style = option['colour']
+                else:
+                    text = option
+                    command = "change_setting_value"
+                    button_style = component_style
+                component.default.button(text=text, component_id=f"{component_id_format}_{text}", button_type=button_style, command=command, state=button_state, padding=False)
 
         elif setting['settingsType'].startswith("input"):
             value = current_setting_value
@@ -340,8 +344,16 @@ class CustomComponents:
             entry_field.insert(0, current_setting_value)
 
             component.default.button(text="Save", component_id=f"{component_id_format}_{value}", button_type="primary", command="change_setting_value", padding=False)
-
-        component.custom.main_menu_button()
+        
+        # Reset setting value button
+        db_setting_value = user_settings.get_user_setting_db_value(setting_id)
+        if setting['settingsType'] != "buttons":
+            # Disables the button if the current value is not in the database
+            if db_setting_value == None:
+                button_state = "disabled"
+            else:
+                button_state = "normal"
+            component.default.button(text="Reset to default", component_id=f"{component_id_format}_reset", button_type="grey", command="reset_setting_value", state=button_state, padding=True)
 
 
     def view_note_textbox(self, note_id, **kwargs):
@@ -369,7 +381,6 @@ class CustomComponents:
         component.default.button(text="Save note", component_id=f"save_note_{note_id}", button_type="default", command="save_note")
         component.default.button(text="Delete note", component_id=f"delete_note_{note_id}", button_type="red", command="delete_note")
         component.custom.go_to_notes_selection_button(note_id=note_id)
-        #component.custom.main_menu_button()
 
         title = self.frame_manager.find_component(f"notes_title_textbox_{note_id}")
         content = self.frame_manager.find_component(f"notes_content_textbox_{note_id}")
@@ -387,10 +398,10 @@ class CustomComponents:
 
         component.default.entry_field(placeholder_text=placeholder_text, show="*", **kwargs)
 
-    def main_menu_button(self, **kwargs):
+    def main_menu_button(self, button_type="grey", **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
 
-        component.default.button(text="Main menu", button_type="grey", **kwargs)
+        component.default.button(text="Main menu", button_type=button_type, **kwargs)
     
     def sign_out_button(self, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
@@ -487,6 +498,22 @@ class ComponentCommandHandler:
     def cancel_create_account(self, component):
         self.screen_manager.show_screen("login")
 
+    def delete_account(self, component):
+        new_component = Components(self.screen_manager, self.frame_manager)
+
+        account = Account()
+        result = new_component.default.message_box(message_box_type="confirm", message=f"Are you sure you want to delete your account?\n\nYou are signed it as '{account.username}'.")
+
+        if result == False:
+            return False
+
+        account.delete_account()
+
+        self.screen_manager.show_screen("login")
+
+        new_component = Components(self.screen_manager, self.frame_manager)
+        new_component.default.message_box(message_box_type="info", message="Successfully deleted your account.")
+
     def sign_out(self, component):
         account = Account()
         account.sign_out()
@@ -546,13 +573,26 @@ class ComponentCommandHandler:
                 new_component.default.message_box(message_box_type="warning", message=f"'{new_value}' is an invalid input. Your input must be a {type_name}.")
                 return
         else:
-            new_component.default.message_box(message_box_type="warning", message=f"This value cannot be changed the setting type '{settings_type}' is not supported yet.")
+            new_component.default.message_box(message_box_type="warning", message=f"This value cannot be changed the setting type '{setting_id}' is not supported yet.")
             return False
 
         # changes the setting value
         user_settings.change_setting(setting_id, new_value)
         self.screen_manager.show_screen("settings", view_setting_id=setting_id)
         new_component.default.message_box(message_box_type="info", message=f"Sucessfully changed the setting '{settings_type}' to '{new_value}'.")
+    
+    def reset_setting_value(self, component):
+        user_settings = UserSettings()
+        new_component = Components(self.screen_manager, self.frame_manager)
+
+        # Gets the setting ID from the component ID
+        settings_type = component.component_id.split("_")[-2]
+        setting_id = component.component_id.split("_")[-3]
+
+        # Resets the setting value
+        user_settings.reset_setting(setting_id)
+        self.screen_manager.show_screen("settings", view_setting_id=setting_id)
+        new_component.default.message_box(message_box_type="info", message=f"Sucessfully reset the setting '{settings_type}' to its default value.")
 
     def view_setting(self, component):
         # Gets the setting ID from the component ID

@@ -3,16 +3,18 @@
         "name": "Text size",
         "description": "Sets the text size throughout the app.",
         "defaultValue": "Medium",
-        "confirmationRequired": false,
         "settingsType": "choices",
         "settingsColour": null,
-        "settingOptions": ["Small", "Medium", "Large"]
+        "settingOptions": [
+            "Small", 
+            "Medium", 
+            "Large"
+        ]
     },
     "blurtingRecallNotesTimeLimit": {
         "name": "Blurting timer",
         "description": "How long you will have (in seconds) to blurt your note.",
         "defaultValue": 60,
-        "confirmationRequired": false,
         "settingsColour": null,
         "settingsType": "input:int"
     },
@@ -20,9 +22,10 @@
         "name": "Delete account",
         "description": "Deletes your account. Once deleted, this action cannot be undone.",
         "defaultValue": null,
-        "confirmationRequired": true,
         "settingsType": "buttons",
-        "settingsColour": "red",
-        "settingOptions": ["Delete"]
+        "settingsColour": null,
+        "settingOptions": [
+            {"name": "Delete", "command": "delete_account", "colour": "red"}
+        ]
     }
 }

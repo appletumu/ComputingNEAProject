@@ -22,8 +22,22 @@ class UserSettings:
 
         self.data = json_manager.read_file()  # returns a dict
         self.list = [{k: v} for k, v in self.data.items()]
+    
+    def get_current_setting_value(self, setting_id):
+        setting = self.get_setting_data(setting_id)
 
-    def get_user_setting_value(self, setting_id):
+        # Gets current setting value from database
+        db_setting_value = self.get_user_setting_db_value(setting_id)
+
+        if db_setting_value != None:
+            current_setting_value = db_setting_value
+        else:
+            # Sets to default value if no value is found
+            current_setting_value = setting['defaultValue']
+        
+        return current_setting_value
+
+    def get_user_setting_db_value(self, setting_id):
         account = Account()
         result = self.db_manager.query(
             "SELECT settings_value FROM user_settings WHERE owner_username = ? AND setting_id = ?",
@@ -59,6 +73,13 @@ class UserSettings:
                 """,
                 (new_value, account.username, setting_id)
             )
+
+    def reset_setting(self, setting_id):
+        account = Account()
+        self.db_manager.query(
+            "DELETE FROM user_settings WHERE owner_username = ? AND setting_id = ?",
+            (account.username, setting_id)
+        )
 
 class Account:
     def __init__(self):
@@ -132,8 +153,7 @@ class Account:
             return {"success": False, "message": "This username is already taken"}
     
     def delete_account(self):
-        db_manager = DatabaseManager()
-        db_manager.execute("DELETE FROM accounts WHERE username = ?", (self.username,))
+        self.db_manager.query("DELETE FROM accounts WHERE username = ?", (self.username,))
 
         json_manager = JsonManager("settings/app_settings.json")
         json_manager.write_json({
