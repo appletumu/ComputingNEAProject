@@ -64,7 +64,7 @@ class UserSettings:
                 """,
                 (account.username, setting_id, new_value)
             )
-        except sqlite3.IntegrityError:
+        except sqlite3.IntegrityError as e:
             # If the setting already exists, update it instead
             self.db_manager.query("""
                 UPDATE user_settings 

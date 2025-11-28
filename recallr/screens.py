@@ -286,9 +286,9 @@ class Screens:
             main.default.content(text="When you are ready, press the green button below to begin!")
             main.default.button(text="Start timer", component_id="start_blurting_timer", button_type="primary", button_style="green")
         elif step == "blurting":
-            app_settings = AppSettings()
-            time_limit = app_settings.blurting_recall_time_limit
-            main.custom.start_countdown(seconds=time_limit)
+            user_settings = UserSettings()
+            time_limit = user_settings.get_current_setting_value("blurtingRecallNotesTimeLimit")
+            main.custom.start_countdown(seconds=int(time_limit))
         elif step == "times_up":
             main.default.title(text="Time's up!")
             main.default.content(text="When you are ready, click the green button below to reveal your note.")
