@@ -252,20 +252,20 @@ class Screens:
         
         main.default.button(f"Page {page.page} / {page.page_count}", button_type="grey", state=tk.DISABLED)
         # Component IDs either end with the next/previous page, or "None"
-        main.custom.change_page_blurting_button(
+        main.custom.change_page_quiz_button(
             text="Next page",
             page=page.next_page,
             button_state=next_button_state,
             selected_notes=self.screen_manager.selected_notes
         )
-        main.custom.change_page_blurting_button(
+        main.custom.change_page_quiz_button(
             text="Previous page",
             page=page.previous_page,
             button_state=previous_button_state,
             selected_notes=self.screen_manager.selected_notes
         )
 
-        main.default.button(text="Start blurting!", component_id="select_blurting_notes", button_type="primary", button_style="green")
+        main.default.button(text="Start blurting!", component_id="select_quiz_notes", button_type="primary", button_style="green")
         main.custom.main_menu_button() 
     
     def blurting_game(self, blurting_notes=[], current_note_index=0, step="waiting", **kwargs):

@@ -408,7 +408,7 @@ class CustomComponents:
 
         component.default.button(text="Sign out", button_type="red", **kwargs)
 
-    def change_page_blurting_button(self, text, page, button_state, selected_notes, **kwargs):
+    def change_page_quiz_button(self, text, page, button_state, selected_notes, **kwargs):
         component = Components(self.screen_manager, self.frame_manager)
         
         component.default.button(
@@ -665,7 +665,7 @@ class ComponentCommandHandler:
         page_number = component.component_id.split("_")[-1]
         self.screen_manager.show_screen("blurting_menu_selection", page_number=page_number, notes_selected=self.screen_manager.selected_notes)
     
-    def select_blurting_notes(self, component):
+    def select_quiz_notes(self, component):
         self.screen_manager.selected_notes = Notes().select_notes_blurt(self.frame_manager, self.screen_manager.selected_notes)
         
         new_component = Components(self.screen_manager, self.frame_manager)
