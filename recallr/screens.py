@@ -186,7 +186,7 @@ class Screens:
             selected_note_id = int(view_note_id)
 
         for note in all_notes:
-            note_id = note[0]
+            note_id = note
 
             # If the button is selected, then it greys it out
             button_state = "normal"
@@ -208,20 +208,32 @@ class Screens:
         ]
 
         # The options that have been chosen, this uses the same index position as 'flashcard_config'
-        selected_option = ["Title", "Randomised"]
+        # Checks to see if either is an attribute of ScreenManager, if not then its likely this screen has only just been loaded
+        try:
+            self.screen_manager.selected_options
+        except AttributeError:
+            self.screen_manager.selected_options = ["Title", "Chronological order"]
+        try:
+            self.screen_manager.selected_notes
+        except AttributeError:
+            self.screen_manager.selected_notes = []
 
         # Displays the components
         index = 0
         for setting in flashcard_config:
             main.default.content(text=f"{index+1}) {setting['title']}")
 
-            for button in setting["options"]:
-                main.default.button(text=button, component_id="None", button_style="default", padding=False, state="normal")
+            for button_name in setting["options"]:
+                if button_name == self.screen_manager.selected_options[index]:
+                    button_state = "disabled"
+                else:
+                    button_state = "normal"
+                main.default.button(text=button_name, component_id=f"flashcards_config_{index}_{button_name}", command="edit_flashcards_config",button_style="default", padding=False, state=button_state)
 
             index += 1
 
         main.default.content(text="When you are ready, click the start button below!")
-        main.default.button(text="Start", component_id="None", button_type="primary", button_style="green", padding=False)
+        main.default.button(text="Start", component_id="start_flashcards_game", button_type="primary", button_style="green", padding=False)
         
 
     @setup_screen(screen_type="menu")

@@ -2,6 +2,18 @@ import sqlite3
 from recallr.backend import JsonManager, DatabaseManager
 import re
 import customtkinter as tk
+import random
+
+class SystemUtilities:
+    def __init__(self):
+        pass
+
+    def randomise(items=[]):
+        while True:
+            shuffled = items[:]
+            random.shuffle(shuffled)
+            if all(a != b for a, b in zip(items, shuffled)):
+                return shuffled
 
 class AppSettings:
     def __init__(self):
@@ -237,7 +249,8 @@ class Notes:
         return True
 
     def get_note_ids(self):
-         return self.db_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
+         all_note_ids = self.db_manager.query("SELECT note_id FROM notes WHERE owner_username = ?", (Account().username,))
+         return [note[0] for note in all_note_ids]
 
     def make_preview(self, text, max_chars=18):
         # Collapse newlines and repeated spaces for both title and content

@@ -2,7 +2,7 @@ import customtkinter as tk
 import tkinter.messagebox as messagebox
 from tkinter.messagebox import askyesno, askokcancel, askyesnocancel, askretrycancel
 from recallr.backend import DatabaseManager
-from recallr.objects import Account, UserSettings, AppSettings, Notes
+from recallr.objects import Account, UserSettings, AppSettings, Notes, SystemUtilities
 
 class ComponentManager:
     def __init__(self, screen_manager, frame_manager):
@@ -661,6 +661,27 @@ class ComponentCommandHandler:
         note_id = component.component_id.split("_")[-1]
 
         self.screen_manager.show_screen("notes", view_note_id=note_id)
+
+    def edit_flashcards_config(self, component):
+        # Component ID: flashcards_config_{index}_{button_name}
+        chosen_option = component.component_id.split("_")[-1]
+        index = int(component.component_id.split("_")[-2])
+
+        self.screen_manager.selected_options[index] = chosen_option
+        self.screen_manager.show_screen("flashcards_menu_setup")
+
+    def start_flashcards_game(self, component):
+        utilities = SystemUtilities()
+        # Gets all the note IDs
+        self.screen_manager.selected_notes = Notes().get_note_ids()
+
+        if "Randomised" in self.screen_manager.selected_options:
+            new_list = utilities.randomise(items=self.screen_manager.selected_notes)
+        
+        new_component = Components(self.screen_manager, self.frame_manager)
+
+        new_component.default.message_box(message_box_type="info", message=f"Selected the following notes:\n\n{self.screen_manager.selected_notes}")
+        #self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes)
     
     def change_page_blurting_selection(self, component):
         self.screen_manager.selected_notes = Notes().select_notes_blurt(self.frame_manager, self.screen_manager.selected_notes)

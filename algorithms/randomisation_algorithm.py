@@ -1,6 +1,6 @@
 import random
 
-def derangement(items):
+def randomise(items):
     while True:
         shuffled = items[:]
         random.shuffle(shuffled)
@@ -8,5 +8,5 @@ def derangement(items):
             return shuffled
 
 items = input("Enter items separated by commas: ").split(', ')
-result = derangement(items)
+result = randomise(items)
 print(result)
