@@ -158,9 +158,9 @@ class Screens:
         main = self.screen_manager.create_frame()
         main.default.title(text="Quiz Menu")
         main.default.content(text="Please pick which mode you would like to do!")
-        main.default.button(text="Flashcards", component_id="coming_soon")
+        main.default.button(text="Flashcards")
         main.default.button(text="Multiple choice", component_id="coming_soon")
-        main.default.button(text="Blurting", component_id="blurting")
+        main.default.button(text="Blurting")
         main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
@@ -195,6 +195,34 @@ class Screens:
 
             sidebar.custom.view_note_button(note_id=note_id, component_id=f"view_note_{note_id}", state=button_state)
         sidebar.default.button(text="Create note")
+
+    @setup_screen(screen_type="menu")
+    def flashcards_menu_setup(self, **kwargs):
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Flashcards")
+
+        # The settings with their options
+        flashcard_config = [
+            {"title": "What should be visible?", "options": ["Title", "Content"]},
+            {"title": "What order should flashcards be in?", "options": ["Chronological order", "Randomised"]},
+        ]
+
+        # The options that have been chosen, this uses the same index position as 'flashcard_config'
+        selected_option = ["Title", "Randomised"]
+
+        # Displays the components
+        index = 0
+        for setting in flashcard_config:
+            main.default.content(text=f"{index+1}) {setting['title']}")
+
+            for button in setting["options"]:
+                main.default.button(text=button, component_id="None", button_style="default", padding=False, state="normal")
+
+            index += 1
+
+        main.default.content(text="When you are ready, click the start button below!")
+        main.default.button(text="Start", component_id="None", button_type="primary", button_style="green", padding=False)
+        
 
     @setup_screen(screen_type="menu")
     def blurting_menu_selection(self, page_number=1, **kwargs):

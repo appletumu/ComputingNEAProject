@@ -538,6 +538,9 @@ class ComponentCommandHandler:
 
     def blurting(self, component):
         self.screen_manager.show_screen("blurting_menu_selection")
+    
+    def flashcards(self, component):
+        self.screen_manager.show_screen("flashcards_menu_setup")
 
     def change_setting_value(self, component):
         new_component = Components(self.screen_manager, self.frame_manager)
