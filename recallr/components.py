@@ -449,7 +449,7 @@ class CustomComponents:
             self.time_left -= 1
             self.window_manager.after(1000, lambda: self.start_countdown(self.time_left))
         else:
-            self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="times_up")
+            self.screen_manager.show_screen("quiz_game", quiz_mode=self.screen_manager.quiz_mode, blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="times_up")
             self.time_left = None
 
 class ComponentCommandHandler:
@@ -676,12 +676,13 @@ class ComponentCommandHandler:
         self.screen_manager.selected_notes = Notes().get_note_ids()
 
         if "Randomised" in self.screen_manager.selected_options:
-            new_list = utilities.randomise(items=self.screen_manager.selected_notes)
+            new_list = utilities.randomise(self.screen_manager.selected_notes)
+            self.screen_manager.selected_notes = new_list
         
         new_component = Components(self.screen_manager, self.frame_manager)
 
-        new_component.default.message_box(message_box_type="info", message=f"Selected the following notes:\n\n{self.screen_manager.selected_notes}")
-        #self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes)
+        #new_component.default.message_box(message_box_type="info", message=f"Selected the following notes:\n\n{self.screen_manager.selected_notes}")
+        self.screen_manager.show_screen("quiz_game", quiz_mode=self.screen_manager.quiz_mode, notes=self.screen_manager.selected_notes)
     
     def change_page_blurting_selection(self, component):
         self.screen_manager.selected_notes = Notes().select_notes_blurt(self.frame_manager, self.screen_manager.selected_notes)
@@ -696,11 +697,11 @@ class ComponentCommandHandler:
 
         if len(self.screen_manager.selected_notes) > 0:
             #new_component.default.message_box(message_box_type="info", message=f"Selected the following notes:\n\n{self.screen_manager.selected_notes}")
-            self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes)
+            self.screen_manager.show_screen("quiz_game", quiz_mode=self.screen_manager.quiz_mode, blurting_notes=self.screen_manager.selected_notes)
         else:
             new_component.default.message_box(message_box_type="warning", message=f"You need to select at least one note to blurt.")
     
-    def go_back_to_blurting_selection(self, component):
+    def go_back_to_quiz_menu(self, component):
         new_component = Components(self.screen_manager, self.frame_manager)
         
         if component.component_id.endswith("noconfirm"):
@@ -711,13 +712,13 @@ class ComponentCommandHandler:
         if result == True:
             self.screen_manager.show_screen("blurting_menu_selection")
 
-    def start_blurting_timer(self, component):
-        self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="blurting")
+    def start_quiz_timer(self, component):
+        self.screen_manager.show_screen("quiz_game", quiz_mode=self.screen_manager.quiz_mode, blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="blurting")
     
     def reveal_blurting_note(self, component):
-        self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="reveal_note")
+        self.screen_manager.show_screen("quiz_game", quiz_mode=self.screen_manager.quiz_mode, blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="reveal_note")
     
-    def next_blurting_note(self, component):
+    def next_quiz_note(self, component):
         self.screen_manager.current_note_index += 1
 
-        self.screen_manager.show_screen("blurting_game", blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="blurting")
+        self.screen_manager.show_screen("quiz_game", quiz_mode=self.screen_manager.quiz_mode, blurting_notes=self.screen_manager.selected_notes, current_note_index=self.screen_manager.current_note_index, step="blurting")

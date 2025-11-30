@@ -8,7 +8,7 @@ class SystemUtilities:
     def __init__(self):
         pass
 
-    def randomise(items=[]):
+    def randomise(self, items=[]):
         while True:
             shuffled = items[:]
             random.shuffle(shuffled)

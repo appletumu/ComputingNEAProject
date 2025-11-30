@@ -197,46 +197,6 @@ class Screens:
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
-    def flashcards_menu_setup(self, **kwargs):
-        main = self.screen_manager.create_frame()
-        main.default.title(text="Flashcards")
-
-        # The settings with their options
-        flashcard_config = [
-            {"title": "What should be visible?", "options": ["Title", "Content"]},
-            {"title": "What order should flashcards be in?", "options": ["Chronological order", "Randomised"]},
-        ]
-
-        # The options that have been chosen, this uses the same index position as 'flashcard_config'
-        # Checks to see if either is an attribute of ScreenManager, if not then its likely this screen has only just been loaded
-        try:
-            self.screen_manager.selected_options
-        except AttributeError:
-            self.screen_manager.selected_options = ["Title", "Chronological order"]
-        try:
-            self.screen_manager.selected_notes
-        except AttributeError:
-            self.screen_manager.selected_notes = []
-
-        # Displays the components
-        index = 0
-        for setting in flashcard_config:
-            main.default.content(text=f"{index+1}) {setting['title']}")
-
-            for button_name in setting["options"]:
-                if button_name == self.screen_manager.selected_options[index]:
-                    button_state = "disabled"
-                else:
-                    button_state = "normal"
-                main.default.button(text=button_name, component_id=f"flashcards_config_{index}_{button_name}", command="edit_flashcards_config",button_style="default", padding=False, state=button_state)
-
-            index += 1
-
-        main.default.content(text="When you are ready, click the start button below!")
-        main.default.button(text="Start", component_id="start_flashcards_game", button_type="primary", button_style="green", padding=False)
-        
-
-    @setup_screen(screen_type="menu")
     def blurting_menu_selection(self, page_number=1, **kwargs):
         # Checks to see if selected_notes is an attribute, if not then its likely this screen has only just been loaded
         try:
@@ -345,3 +305,101 @@ class Screens:
                 return
 
         main.default.button(text="Exit", component_id="go_back_to_blurting_selection", button_type="red")
+
+    @setup_screen(screen_type="menu")
+    def flashcards_menu_setup(self, **kwargs):
+        main = self.screen_manager.create_frame()
+        main.default.title(text="Flashcards")
+
+        # The settings with their options
+        flashcard_config = [
+            {"title": "What should be visible?", "options": ["Title", "Content"]},
+            {"title": "What order should flashcards be in?", "options": ["Chronological order", "Randomised"]},
+        ]
+
+        # The options that have been chosen, this uses the same index position as 'flashcard_config'
+        # Checks to see if either is an attribute of ScreenManager, if not then its likely this screen has only just been loaded
+        try:
+            self.screen_manager.quiz_mode
+        except AttributeError:
+            self.screen_manager.quiz_mode = "Flashcards"
+        try:
+            self.screen_manager.selected_options
+        except AttributeError:
+            self.screen_manager.selected_options = ["Title", "Chronological order"]
+        try:
+            self.screen_manager.selected_notes
+        except AttributeError:
+            self.screen_manager.selected_notes = []
+        # Checks to see if selected_notes is an attribute, if not then its likely this screen has only just been loaded
+        try:
+            self.screen_manager.current_note_index
+        except AttributeError:
+            self.screen_manager.current_note_index = 0
+
+        # Displays the components
+        index = 0
+        for setting in flashcard_config:
+            main.default.content(text=f"{index+1}) {setting['title']}")
+
+            for button_name in setting["options"]:
+                if button_name == self.screen_manager.selected_options[index]:
+                    button_state = "disabled"
+                else:
+                    button_state = "normal"
+                main.default.button(text=button_name, component_id=f"flashcards_config_{index}_{button_name}", command="edit_flashcards_config",button_style="default", padding=False, state=button_state)
+
+            index += 1
+
+        main.default.content(text="When you are ready, click the start button below!")
+        main.default.button(text="Start", component_id="start_flashcards_game", button_type="primary", button_style="green", padding=False)
+        main.custom.main_menu_button()
+
+    @setup_screen(screen_type="menu")
+    def quiz_game(self, quiz_mode="Quiz", notes=[], current_note_index=0, step="waiting", **kwargs):
+        main = self.screen_manager.create_frame()
+        notes_obj = Notes()
+        note = notes_obj.get_notes(note_ids=[notes[current_note_index]])[0]
+
+        if quiz_mode == "Flaschcards":
+            game_title = "Flashcard"
+            note_type = "flashcard"
+        elif quiz_mode == "Blurting":
+            game_title = "Blurt"
+            note_type = "note"
+        else:
+            game_title = "Note"
+            note_type = "note"
+
+        title = notes_obj.make_preview(note['title'], max_chars=30)
+        main.default.title(f"{game_title}: {title}")
+        main.default.content(text=f"{note_type}: {notes.index(note['id'])+1}/{len(notes)}")
+
+        # This section changes based on what 'step' you are on
+        # waiting: Waiting to start the next timer
+        # timer: Countdown timer
+        # times_up / reveal_note: Finished the note, ready to go to the next one
+
+        if step == "waiting":
+            main.default.content(text="When you are ready, press the green button below to begin!")
+            main.default.button(text="Start timer", component_id="start_quiz_timer", button_type="primary", button_style="green")
+        elif step == "timer":
+            user_settings = UserSettings()
+            time_limit = user_settings.get_current_setting_value("blurtingRecallNotesTimeLimit")
+            main.custom.start_countdown(seconds=int(time_limit))
+        elif step == "times_up":
+            main.default.title(text="Time's up!")
+            main.default.content(text=f"When you are ready, click the green button below to reveal your {note_type}.")
+            main.custom.reveal_blurting_note_button()
+        elif step == "reveal_note":
+            textbox = main.default.text_box(component_id="quiz_content_textbox")
+            textbox.insert("0.0", note['content'])
+            textbox.configure(state=tk.DISABLED)
+
+            if current_note_index+1 < len(notes):
+                main.default.button(text=f"Next {note_type}", component_id="next_quiz_note", button_type="primary")
+            else:
+                main.default.button(text=f"Finish {quiz_mode}", component_id="go_back_to_quiz_menu_noconfirm", command="go_back_to_quiz_menu", button_type="primary")
+                return
+
+        main.default.button(text="Exit", component_id="go_back_to_quiz_menu", button_type="red")

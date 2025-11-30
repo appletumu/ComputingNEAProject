@@ -64,5 +64,12 @@
         "noteButtonPreview": 18,
         "blurtingMenuPreview": 30
     },
-    "blurtingRecallNotesTimeLimit": 60
+    "quizGameConfig": {
+        "blurting": {
+            "steps": ["waiting", "timer", "times_up", "reveal_note"]
+        },
+        "flashcards": {
+            "steps": ["waiting", "timer", "times_up", "reveal_note"]
+        }
+    }
 }
