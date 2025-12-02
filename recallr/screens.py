@@ -198,7 +198,11 @@ class Screens:
 
     @setup_screen(screen_type="menu")
     def blurting_menu_selection(self, page_number=1, **kwargs):
-        # Checks to see if selected_notes is an attribute, if not then its likely this screen has only just been loaded
+        # Checks to see if these an attribute, if not then its likely this screen has only just been loaded
+        try:
+            self.screen_manager.selected_options
+        except AttributeError:
+            self.screen_manager.selected_options = ["Title", "Chronological order"]
         try:
             self.screen_manager.selected_notes
         except AttributeError:
@@ -307,7 +311,7 @@ class Screens:
         main.default.button(text="Exit", component_id="go_back_to_blurting_selection", button_type="red")
 
     @setup_screen(screen_type="menu")
-    def flashcards_menu_setup(self, **kwargs):
+    def flashcards_menu(self, **kwargs):
         main = self.screen_manager.create_frame()
         main.default.title(text="Flashcards")
 
@@ -322,7 +326,7 @@ class Screens:
         try:
             self.screen_manager.quiz_mode
         except AttributeError:
-            self.screen_manager.quiz_mode = "Flashcards"
+            self.screen_manager.quiz_mode = "flashcards"
         try:
             self.screen_manager.selected_options
         except AttributeError:
@@ -356,15 +360,35 @@ class Screens:
         main.custom.main_menu_button()
 
     @setup_screen(screen_type="menu")
-    def quiz_game(self, quiz_mode="Quiz", notes=[], current_note_index=0, step="waiting", **kwargs):
+    def quiz_game(self, notes=[], current_note_index=0, **kwargs):
         main = self.screen_manager.create_frame()
+        quiz_mode = self.screen_manager.quiz_mode
         notes_obj = Notes()
         note = notes_obj.get_notes(note_ids=[notes[current_note_index]])[0]
+        json_data = AppSettings().quiz_game_config
 
-        if quiz_mode == "Flaschcards":
+        # Attempts to get the current step index, if it doesn't exist then it sets it to 0
+        try:
+            step_index = self.screen_manager.current_step_index
+        except AttributeError:
+            self.screen_manager.current_step_index = 0
+            step_index = self.screen_manager.current_step_index
+
+        # Gets the current step
+        step = json_data[quiz_mode]["steps"][step_index]
+
+        # Updates the step index for next time
+        if step == "waiting" and current_note_index == 0:
+            self.screen_manager.current_step_index += 1
+        elif json_data[quiz_mode]["steps"][-1] == step:
+            self.screen_manager.current_step_index = 0
+        else:
+            self.screen_manager.current_step_index += 1
+
+        if quiz_mode == "flashcards":
             game_title = "Flashcard"
             note_type = "flashcard"
-        elif quiz_mode == "Blurting":
+        elif quiz_mode == "blurting":
             game_title = "Blurt"
             note_type = "note"
         else:
@@ -372,8 +396,8 @@ class Screens:
             note_type = "note"
 
         title = notes_obj.make_preview(note['title'], max_chars=30)
-        main.default.title(f"{game_title}: {title}")
-        main.default.content(text=f"{note_type}: {notes.index(note['id'])+1}/{len(notes)}")
+        main.default.title(f"{title}")
+        main.default.content(text=f"{game_title}: {notes.index(note['id'])+1}/{len(notes)}")
 
         # This section changes based on what 'step' you are on
         # waiting: Waiting to start the next timer
@@ -382,7 +406,7 @@ class Screens:
 
         if step == "waiting":
             main.default.content(text="When you are ready, press the green button below to begin!")
-            main.default.button(text="Start timer", component_id="start_quiz_timer", button_type="primary", button_style="green")
+            main.default.button(text="Begin", component_id="start_quiz_timer", button_type="primary", button_style="green")
         elif step == "timer":
             user_settings = UserSettings()
             time_limit = user_settings.get_current_setting_value("blurtingRecallNotesTimeLimit")
@@ -391,7 +415,7 @@ class Screens:
             main.default.title(text="Time's up!")
             main.default.content(text=f"When you are ready, click the green button below to reveal your {note_type}.")
             main.custom.reveal_blurting_note_button()
-        elif step == "reveal_note":
+        elif step == "reveal":
             textbox = main.default.text_box(component_id="quiz_content_textbox")
             textbox.insert("0.0", note['content'])
             textbox.configure(state=tk.DISABLED)
@@ -401,5 +425,8 @@ class Screens:
             else:
                 main.default.button(text=f"Finish {quiz_mode}", component_id="go_back_to_quiz_menu_noconfirm", command="go_back_to_quiz_menu", button_type="primary")
                 return
+        else:
+            main.default.content(text="There is nothing to show here.")
+            main.default.content(text=f"Quiz mode: {quiz_mode}\nStep: {step}\nCurrent Note: {current_note_index}\nSelected notes: {notes}")
 
         main.default.button(text="Exit", component_id="go_back_to_quiz_menu", button_type="red")

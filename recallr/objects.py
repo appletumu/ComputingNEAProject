@@ -25,6 +25,7 @@ class AppSettings:
         self.component_configs = json_manager.read_json("componentConfigs")
         self.colors = json_manager.read_json("colors")
         self.blurting_recall_time_limit = json_manager.read_json("blurtingRecallNotesTimeLimit")
+        self.quiz_game_config = json_manager.read_json("quizGameConfig")
 
 class UserSettings:
     def __init__(self):

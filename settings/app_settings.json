@@ -65,11 +65,12 @@
         "blurtingMenuPreview": 30
     },
     "quizGameConfig": {
+        "_comment": "Each steps list MUST at least have 'waiting' (at index 0) and one other step.",
         "blurting": {
-            "steps": ["waiting", "timer", "times_up", "reveal_note"]
+            "steps": ["waiting", "timer", "times_up", "reveal"]
         },
         "flashcards": {
-            "steps": ["waiting", "timer", "times_up", "reveal_note"]
+            "steps": ["waiting", "reveal"]
         }
     }
 }
