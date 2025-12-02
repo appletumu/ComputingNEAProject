@@ -198,17 +198,21 @@ class Screens:
 
     @setup_screen(screen_type="menu")
     def blurting_menu(self, page_number=1, **kwargs):
-        # Checks to see if these an attribute, if not then its likely this screen has only just been loaded
+        try:
+            self.screen_manager.quiz_mode = "blurting"
+        except AttributeError:
+            self.screen_manager.quiz_mode = "blurting"
         try:
             self.screen_manager.selected_options
         except AttributeError:
             self.screen_manager.selected_options = ["Title", "Chronological order"]
         try:
-            self.screen_manager.selected_notes
+            self.screen_manager.selected_notes = []
         except AttributeError:
             self.screen_manager.selected_notes = []
+        # Checks to see if selected_notes is an attribute, if not then its likely this screen has only just been loaded
         try:
-            self.screen_manager.current_note_index
+            self.screen_manager.current_note_index = 0
         except AttributeError:
             self.screen_manager.current_note_index = 0
 
@@ -324,7 +328,7 @@ class Screens:
         # The options that have been chosen, this uses the same index position as 'flashcard_config'
         # Checks to see if either is an attribute of ScreenManager, if not then its likely this screen has only just been loaded
         try:
-            self.screen_manager.quiz_mode
+            self.screen_manager.quiz_mode = "flashcards"
         except AttributeError:
             self.screen_manager.quiz_mode = "flashcards"
         try:
@@ -332,12 +336,12 @@ class Screens:
         except AttributeError:
             self.screen_manager.selected_options = ["Title", "Chronological order"]
         try:
-            self.screen_manager.selected_notes
+            self.screen_manager.selected_notes = []
         except AttributeError:
             self.screen_manager.selected_notes = []
         # Checks to see if selected_notes is an attribute, if not then its likely this screen has only just been loaded
         try:
-            self.screen_manager.current_note_index
+            self.screen_manager.current_note_index = 0
         except AttributeError:
             self.screen_manager.current_note_index = 0
 
@@ -435,9 +439,13 @@ class Screens:
             show_content()
 
             if current_note_index+1 < len(notes):
+                main.default.content(text=f"Press the blue button below to continue.")
                 main.default.button(text=f"Next {note_type}", component_id="next_quiz_note", button_type="primary")
             else:
+                account = Account()
+                main.default.content(text=f"You have finished, congratulations {account.display_name}!")
                 main.default.button(text=f"Finish {quiz_mode}", component_id="go_back_to_quiz_menu_noconfirm", command="go_back_to_quiz_menu", button_type="primary")
+                main.custom.main_menu_button()
                 return
         else:
             main.default.content(text="There is nothing to show here.")
