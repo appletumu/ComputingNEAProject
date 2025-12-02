@@ -4,6 +4,7 @@ from recallr.components import Components
 from recallr.objects import UserSettings, AppSettings, Account, Notes
 from recallr.backend import DatabaseManager
 from paginate import Page
+from collections import defaultdict
 
 def setup_screen(screen_type="menu"):
     def decorator(func):
@@ -203,7 +204,7 @@ class Screens:
         except AttributeError:
             self.screen_manager.quiz_mode = "blurting"
         try:
-            self.screen_manager.selected_options
+            self.screen_manager.selected_options = ["Title", "Chronological order"]
         except AttributeError:
             self.screen_manager.selected_options = ["Title", "Chronological order"]
         try:
@@ -275,44 +276,6 @@ class Screens:
 
         main.default.button(text="Start blurting!", component_id="select_blurting_notes", button_type="primary", button_style="green")
         main.custom.main_menu_button() 
-    
-    def blurting_game(self, blurting_notes=[], current_note_index=0, step="waiting", **kwargs):
-        main = self.screen_manager.create_frame()
-        notes_obj = Notes()
-        note = notes_obj.get_notes(note_ids=[blurting_notes[current_note_index]])[0]
-
-        title = notes_obj.make_preview(note['title'], max_chars=30)
-        main.default.title(f"Blurt: {title}")
-        main.default.content(text=f"Note: {blurting_notes.index(note['id'])+1}/{len(blurting_notes)}")
-
-        # This section changes based on what 'step' you are on
-        # waiting: Waiting to start the next timer
-        # blurting: Countdown timer where you are blurting
-        # times_up / reveal_note: Finished blurting the note, ready to go to the next one
-
-        if step == "waiting":
-            main.default.content(text="When you are ready, press the green button below to begin!")
-            main.default.button(text="Start timer", component_id="start_blurting_timer", button_type="primary", button_style="green")
-        elif step == "blurting":
-            user_settings = UserSettings()
-            time_limit = user_settings.get_current_setting_value("blurtingRecallNotesTimeLimit")
-            main.custom.start_countdown(seconds=int(time_limit))
-        elif step == "times_up":
-            main.default.title(text="Time's up!")
-            main.default.content(text="When you are ready, click the green button below to reveal your note.")
-            main.custom.reveal_blurting_note_button()
-        elif step == "reveal_note":
-            textbox = main.default.text_box(component_id="blurting_content_textbox")
-            textbox.insert("0.0", note['content'])
-            textbox.configure(state=tk.DISABLED)
-
-            if current_note_index+1 < len(blurting_notes):
-                main.default.button(text="Next note", component_id="next_blurting_note", button_type="primary")
-            else:
-                main.default.button(text="Finish blurting", component_id="go_back_to_blurting_selection_noconfirm", command="go_back_to_blurting_selection", button_type="primary")
-                return
-
-        main.default.button(text="Exit", component_id="go_back_to_blurting_selection", button_type="red")
 
     @setup_screen(screen_type="menu")
     def flashcards_menu(self, **kwargs):
@@ -425,8 +388,15 @@ class Screens:
         # times_up / reveal_note: Finished the note, ready to go to the next one
 
         if step == "waiting":
-            main.default.content(text="When you are ready, press the green button below to begin!")
-            main.default.button(text="Begin", component_id="start_quiz_timer", button_type="primary", button_style="green")
+            waiting_step_data = json_data[quiz_mode]['waitingStep']
+
+            raw = waiting_step_data['content']
+            content = raw.format_map(defaultdict(str, locals()))
+            raw = waiting_step_data['buttonText']
+            button_text = raw.format_map(defaultdict(str, locals()))
+                        
+            main.default.content(text=content)
+            main.default.button(text=button_text, component_id="start_quiz_timer", button_type="primary", button_style="green")
         elif step == "timer":
             user_settings = UserSettings()
             time_limit = user_settings.get_current_setting_value("blurtingRecallNotesTimeLimit")

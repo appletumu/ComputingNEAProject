@@ -67,10 +67,18 @@
     "quizGameConfig": {
         "_comment": "Each steps list MUST at least have 'waiting' (at index 0) and one other step.",
         "blurting": {
-            "steps": ["waiting", "timer", "times_up", "reveal"]
+            "steps": ["waiting", "timer", "times_up", "reveal"],
+            "waitingStep": {
+                "content": "When you are ready, press the green button below to begin!",
+                "buttonText": "Begin {quiz_mode}"
+            }
         },
         "flashcards": {
-            "steps": ["waiting", "reveal"]
+            "steps": ["waiting", "reveal"],
+            "waitingStep": {
+                "content": "When you are ready, press the green button below to reveal!",
+                "buttonText": "Reveal {note_type}"
+            }
         }
     }
 }
