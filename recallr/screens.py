@@ -197,7 +197,7 @@ class Screens:
         sidebar.default.button(text="Create note")
 
     @setup_screen(screen_type="menu")
-    def blurting_menu_selection(self, page_number=1, **kwargs):
+    def blurting_menu(self, page_number=1, **kwargs):
         # Checks to see if these an attribute, if not then its likely this screen has only just been loaded
         try:
             self.screen_manager.selected_options
@@ -395,9 +395,25 @@ class Screens:
             game_title = "Note"
             note_type = "note"
 
-        title = notes_obj.make_preview(note['title'], max_chars=30)
-        main.default.title(f"{title}")
-        main.default.content(text=f"{game_title}: {notes.index(note['id'])+1}/{len(notes)}")
+        def show_title():
+            main.default.title(notes_obj.make_preview(note['title'], max_chars=30))
+        def show_counter():
+            main.default.content(text=f"{game_title}: {notes.index(note['id'])+1}/{len(notes)}")
+        def show_content():
+            textbox = main.default.text_box(component_id="quiz_content_textbox")
+            textbox.insert("0.0", note['content'])
+            textbox.configure(state=tk.DISABLED)
+
+        if "Content" in self.screen_manager.selected_options and step != "reveal":
+            main.default.title("Guess the title!")
+            show_counter()
+            show_content()
+        elif "Content" in self.screen_manager.selected_options and step == "reveal":
+            show_title()
+            show_counter()
+        else:
+            show_title()
+            show_counter()
 
         # This section changes based on what 'step' you are on
         # waiting: Waiting to start the next timer
@@ -415,10 +431,8 @@ class Screens:
             main.default.title(text="Time's up!")
             main.default.content(text=f"When you are ready, click the green button below to reveal your {note_type}.")
             main.custom.reveal_blurting_note_button()
-        elif step == "reveal":
-            textbox = main.default.text_box(component_id="quiz_content_textbox")
-            textbox.insert("0.0", note['content'])
-            textbox.configure(state=tk.DISABLED)
+        elif step == "reveal":            
+            show_content()
 
             if current_note_index+1 < len(notes):
                 main.default.button(text=f"Next {note_type}", component_id="next_quiz_note", button_type="primary")
