@@ -208,10 +208,9 @@ class Screens:
         except AttributeError:
             self.screen_manager.selected_options = ["Title", "Chronological order"]
         try:
-            self.screen_manager.selected_notes = []
+            self.screen_manager.selected_notes
         except AttributeError:
             self.screen_manager.selected_notes = []
-        # Checks to see if selected_notes is an attribute, if not then its likely this screen has only just been loaded
         try:
             self.screen_manager.current_note_index = 0
         except AttributeError:
