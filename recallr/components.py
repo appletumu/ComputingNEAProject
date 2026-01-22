@@ -582,7 +582,7 @@ class ComponentCommandHandler:
         # changes the setting value
         user_settings.change_setting(setting_id, new_value)
         self.screen_manager.show_screen("settings", view_setting_id=setting_id)
-        new_component.default.message_box(message_box_type="info", message=f"Sucessfully changed the setting '{settings_type}' to '{new_value}'.")
+        new_component.default.message_box(message_box_type="info", message=f"Sucessfully changed the setting '{setting_id}' to '{new_value}'.")
     
     def reset_setting_value(self, component):
         user_settings = UserSettings()
@@ -595,7 +595,7 @@ class ComponentCommandHandler:
         # Resets the setting value
         user_settings.reset_setting(setting_id)
         self.screen_manager.show_screen("settings", view_setting_id=setting_id)
-        new_component.default.message_box(message_box_type="info", message=f"Sucessfully reset the setting '{settings_type}' to its default value.")
+        new_component.default.message_box(message_box_type="info", message=f"Sucessfully reset the setting '{setting_id}' to its default value.")
 
     def view_setting(self, component):
         # Gets the setting ID from the component ID
